@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Search from "./Search";
 import { site } from "../data/site";
 
 interface MobileDrawerProps {
@@ -23,7 +24,7 @@ export default function MobileDrawer({
       />
 
       {/* Drawer */}
-      <div className="absolute top-0 right-0 h-screen w-80 max-w-[85vw] bg-white p-8 shadow-2xl">
+      <div className="absolute top-0 right-0 h-screen w-80 max-w-[85vw] overflow-y-auto bg-white p-8 shadow-2xl">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-black">
             Urbanstories
@@ -31,11 +32,15 @@ export default function MobileDrawer({
 
           <button
             onClick={onClose}
-            className="text-3xl leading-none text-black"
+            className="text-3xl leading-none text-black transition hover:text-neutral-500"
             aria-label="Close menu"
           >
             ×
           </button>
+        </div>
+
+        <div className="mt-8">
+          <Search />
         </div>
 
         <nav className="mt-10">
