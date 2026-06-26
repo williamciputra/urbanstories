@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Search from "./Search";
 import { site } from "../data/site";
 
@@ -59,16 +60,18 @@ export default function Header() {
             isScrolled ? "mt-6" : "mt-12"
           }`}
         >
-          <ul className="flex flex-wrap gap-8 text-sm uppercase tracking-[0.18em] text-neutral-700">
-            {site.navigation.map((item) => (
-              <li
-                key={item}
-                className="cursor-pointer transition hover:text-black"
-              >
+        <ul className="flex flex-wrap gap-8 text-sm uppercase tracking-[0.18em] text-neutral-700">
+          {site.navigation.map((item) => (
+            <li key={item}>
+              <Link
+                href={`/category/${item.toLowerCase()}`}
+                className="transition hover:text-black"
+          > 
                 {item}
-              </li>
-            ))}
-          </ul>
+              </Link>
+            </li>
+       ))}
+        </ul>
         </nav>
       </div>
     </header>
