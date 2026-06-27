@@ -54,7 +54,7 @@ export const metadata: Metadata = {
       "Urbanstories menghadirkan cerita, ide, bisnis, teknologi, kesehatan, dan gaya hidup yang menginspirasi kehidupan urban.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Urbanstories",
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     title: "Urbanstories | Cerita yang Menginspirasi",
     description:
       "Cerita yang Menginspirasi tentang bisnis, teknologi, kesehatan, dan gaya hidup.",
-    images: ["/og-image.jpg"],
+    images: ["/twitter-image.png"],
   },
 
   robots: {
@@ -75,8 +75,11 @@ export const metadata: Metadata = {
     follow: true,
   },
 
+  manifest: "/manifest.webmanifest",
+
   icons: {
     icon: "/favicon.ico",
+    apple: "/apple-icon.png",
   },
 };
 
