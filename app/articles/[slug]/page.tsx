@@ -104,7 +104,7 @@ export default async function ArticlePage({ params }: Props) {
             {paragraphs.map((paragraph, index) => (
               <p
                 key={index}
-                className="text-[22px] leading-[2.1] text-neutral-700 first:first-letter:float-left first:first-letter:mr-4 first:first-letter:text-7xl first:first-letter:font-bold first:first-letter:leading-[0.8]"
+                className="text-[22px] leading-[2.1] text-neutral-700"
               >
                 {paragraph}
               </p>
