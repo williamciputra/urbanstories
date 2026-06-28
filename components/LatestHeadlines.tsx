@@ -2,32 +2,27 @@ import { articles } from "../data/articles";
 import EditorsCard from "./EditorsCard";
 
 export default function LatestHeadlines() {
-  const picks = articles.filter((article) => article.editorPick);
+  const headlines = articles
+    .filter((article) => !article.hero)
+    .slice(0, 4);
 
-  if (picks.length === 0) return null;
+  if (headlines.length === 0) return null;
 
   return (
-    <section className="mt-28">
-      <h2 className="text-5xl font-semibold tracking-tight text-neutral-900">
-        Editor&apos;s Pick
+    <section className="h-full">
+      <h2 className="text-2xl font-semibold text-neutral-900">
+        LATEST HEADLINES
       </h2>
 
-      <div className="border-b border-black mt-6 mb-12"></div>
+      <div className="mt-2 mb-2 border-b border-neutral-300"></div>
 
-      <div className="grid lg:grid-cols-[2fr_1fr] gap-12">
-        <EditorsCard
-          article={picks[0]}
-          featured={true}
-        />
-
-        <div className="space-y-8">
-          {picks.slice(1).map((article) => (
-            <EditorsCard
-              key={article.id}
-              article={article}
-            />
-          ))}
-        </div>
+      <div className="space-y-1">
+        {headlines.map((article) => (
+          <EditorsCard
+            key={article.id}
+            article={article}
+          />
+        ))}
       </div>
     </section>
   );

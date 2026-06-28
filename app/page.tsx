@@ -1,6 +1,5 @@
 import Header from "../components/Header";
-import TopStory from "../components/TopStory";
-import LatestHeadlines from "../components/LatestHeadlines";
+import FeaturedNewsSection from "../components/FeaturedNewsSection";
 import CategorySection from "../components/CategorySection";
 import FeaturedInsight from "../components/FeaturedInsight";
 import LatestArticles from "../components/LatestArticles";
@@ -15,13 +14,7 @@ export default function Home() {
 
         <Header />
 
-        <section className="mt-16">
-          <TopStory />
-        </section>
-
-        <section className="mt-32">
-          <LatestHeadlines />
-        </section>
+        <FeaturedNewsSection />
 
         <CategorySection category="Lifestyle" />
 
