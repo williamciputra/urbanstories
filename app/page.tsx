@@ -1,9 +1,9 @@
 import Header from "../components/Header";
-import Hero from "../components/Hero";
-import EditorsPick from "../components/EditorsPick";
-import FeaturedCategory from "../components/FeaturedCategory";
+import TopStory from "../components/TopStory";
+import LatestHeadlines from "../components/LatestHeadlines";
+import CategorySection from "../components/CategorySection";
 import FeaturedInsight from "../components/FeaturedInsight";
-import NewsFeed from "../components/NewsFeed";
+import LatestArticles from "../components/LatestArticles";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 
@@ -15,22 +15,22 @@ export default function Home() {
 
         <Header />
 
-        <section className="pt-28">
-          <Hero />
+        <section className="mt-16">
+          <TopStory />
         </section>
 
         <section className="mt-32">
-          <EditorsPick />
+          <LatestHeadlines />
         </section>
 
-        <FeaturedCategory category="Lifestyle" />
+        <CategorySection category="Lifestyle" />
 
-        <FeaturedCategory category="Health" />
+        <CategorySection category="Explore" />
 
         <FeaturedInsight />
 
         <section className="mt-32">
-          <NewsFeed />
+          <LatestArticles />
         </section>
 
         <section className="mt-32 pb-20">

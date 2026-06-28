@@ -26,60 +26,48 @@ export default function Header() {
   return (
     <>
       <header
-        className="sticky top-0 z-50 border-b border-neutral-200 bg-[#FAF8F3]/95 transition-all duration-300"
+        className={`sticky top-0 z-50 border-b border-neutral-200 bg-[#FAF8F3] transition-all duration-300 ${isScrolled ? "shadow-sm" : ""
+          }`}
       >
         <div
-          className={`mx-auto max-w-7xl px-6 transition-all duration-300 ${isScrolled ? "py-5" : "py-8"
-            }`}
+          className="mx-auto max-w-7xl px-6 py-5"
         >
           <MobileHeader
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
 
-          <div className="hidden lg:flex lg:flex-row lg:items-end lg:justify-between gap-8">
-            <div>
-              <Link href="/" className="inline-block">
-                <h1
-                  className={`font-semibold tracking-[-0.05em] text-neutral-900 transition-all duration-300 hover:opacity-80 ${isScrolled
-                      ? "text-4xl md:text-5xl"
-                      : "text-6xl md:text-7xl"
-                    }`}
-                >
+          <div className="hidden lg:flex items-center justify-between">
+            <div className="flex-shrink-0">
+              <Link href="/">
+                <h1 className="text-3xl font-semibold tracking-[-0.04em] text-neutral-900 transition hover:opacity-80">
                   {site.name}
                 </h1>
               </Link>
 
-              <p
-                className={`overflow-hidden text-neutral-600 transition-all duration-300 ${isScrolled
-                    ? "mt-0 max-h-0 opacity-0"
-                    : "mt-4 max-h-20 text-lg opacity-100"
-                  }`}
-              >
+              <p className="mt-1 text-sm text-neutral-500">
                 {site.tagline}
               </p>
             </div>
 
-            <Search compact={isScrolled} />
+            <nav>
+              <ul className="flex items-center gap-8 text-[15px] font-medium text-neutral-700">
+                {site.navigation.map((item) => (
+                  <li key={item}>
+                    <Link
+                      href={`/category/${item.toLowerCase()}`}
+                      className="transition-colors duration-200 hover:text-black"
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <Search compact={false} />
           </div>
 
-          <nav
-            className={`hidden lg:block transition-all duration-300 ${isScrolled ? "mt-6" : "mt-12"
-              }`}
-          >
-            <ul className="flex flex-wrap gap-8 text-sm uppercase tracking-[0.18em] text-neutral-700">
-              {site.navigation.map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/category/${item.toLowerCase()}`}
-                    className="transition hover:text-black"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
         </div>
       </header>
 

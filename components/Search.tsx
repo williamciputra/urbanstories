@@ -43,9 +43,8 @@ export default function Search({
 
   return (
     <div
-      className={`relative w-full transition-all duration-300 ${
-        compact ? "max-w-xs" : "max-w-sm"
-      }`}
+      className={`relative transition-all duration-300 ${compact ? "w-64" : "w-80"
+        }`}
     >
       <input
         type="text"
@@ -61,9 +60,8 @@ export default function Search({
             setKeyword("");
           }
         }}
-        className={`w-full rounded-full border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 outline-none transition-all duration-300 focus:border-black ${
-          compact ? "h-10 px-4 text-sm" : "h-12 px-5 text-sm"
-        }`}
+        className={`w-full rounded-full border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 outline-none transition-all duration-300 focus:border-black ${compact ? "h-10 px-4 text-sm" : "h-12 px-5 text-sm"
+          }`}
       />
 
       {keyword.trim() && results.length > 0 && (

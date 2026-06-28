@@ -1,7 +1,7 @@
 import { articles } from "../data/articles";
 import EditorsCard from "./EditorsCard";
 
-export default function EditorsPick() {
+export default function LatestHeadlines() {
   const picks = articles.filter((article) => article.editorPick);
 
   if (picks.length === 0) return null;
