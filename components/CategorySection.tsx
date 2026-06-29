@@ -6,7 +6,7 @@ interface FeaturedCategoryProps {
   category: string;
 }
 
-export default function FeaturedCategory({
+export default function CategorySection({
   category,
 }: FeaturedCategoryProps) {
   const categoryArticles = articles
@@ -22,32 +22,32 @@ export default function FeaturedCategory({
   const secondary = categoryArticles.slice(1);
 
   return (
-    <section className="mt-36">
+    <section className="mt-28">
 
       <div className="flex items-center justify-between">
 
-        <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-neutral-900">
+        <h2 className="text-2xl font-semibold text-neutral-900">
           {category}
         </h2>
 
         <Link
           href={`/category/${category.toLowerCase()}`}
-          className="text-sm text-neutral-500 transition hover:text-black"
+          className="text-sm font-medium text-neutral-600 transition hover:text-black"
         >
           Lihat Semua →
         </Link>
 
       </div>
 
-      <div className="mt-6 border-t border-neutral-300"></div>
+      <div className="mt-3 mb-6 border-b border-neutral-300"></div>
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[1.6fr_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr]">
 
         <Link
           href={`/articles/${featured.slug}`}
           className="group"
         >
-          <div className="relative aspect-[16/10] overflow-hidden">
+          <div className="relative aspect-[5/2] overflow-hidden rounded-sm">
             <Image
               src={featured.image}
               alt={featured.title}
@@ -58,32 +58,28 @@ export default function FeaturedCategory({
             />
           </div>
 
-          <p className="mt-6 text-xs uppercase tracking-[0.25em] text-neutral-500">
+          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-neutral-500">
             {featured.category}
           </p>
 
-          <h3 className="mt-3 text-4xl font-bold leading-tight text-neutral-900 transition group-hover:opacity-70">
+          <h3 className="mt-2 text-3xl font-bold leading-tight tracking-[-0.02em] text-neutral-900 transition group-hover:opacity-70">
             {featured.title}
           </h3>
 
-          <p className="mt-5 text-lg leading-8 text-neutral-600">
-            {featured.excerpt}
-          </p>
-
-          <p className="mt-6 text-sm text-neutral-500">
+          <p className="mt-2 text-sm text-neutral-500">
             {featured.date} • {featured.readTime}
           </p>
         </Link>
 
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col divide-y divide-neutral-200">
 
           {secondary.map((article) => (
             <Link
               key={article.id}
               href={`/articles/${article.slug}`}
-              className="group flex gap-5"
+              className="group flex gap-4 py-4 first:pt-0 last:pb-0"
             >
-              <div className="relative h-32 w-40 flex-shrink-0 overflow-hidden">
+              <div className="relative h-24 w-32 flex-shrink-0 overflow-hidden rounded-sm">
                 <Image
                   src={article.image}
                   alt={article.title}
@@ -104,12 +100,8 @@ export default function FeaturedCategory({
                   {article.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-7 text-neutral-600 line-clamp-3">
-                  {article.excerpt}
-                </p>
-
-                <p className="mt-4 text-sm text-neutral-500">
-                  {article.date}
+                <p className="mt-2 text-sm text-neutral-500">
+                  {article.date} • {article.readTime}
                 </p>
 
               </div>

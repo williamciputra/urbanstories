@@ -234,4 +234,69 @@ Selain menyehatkan, konsep ini juga membantu mengurangi kemacetan serta polusi u
   editorPick: false,
   readTime: "4 min read",
 },
+{
+  id: 11,
+  slug: "ramalan-zodiak-pekan-ini",
+  title: "Ramalan Zodiak Pekan Ini: Karier, Asmara, dan Keuangan",
+  excerpt:
+    "Simak prediksi zodiak minggu ini mulai dari peluang karier hingga hubungan asmara.",
+  content: `
+Setiap pekan membawa dinamika baru bagi setiap zodiak.
+
+Mulai dari peluang karier, kondisi finansial, hingga hubungan asmara, semuanya dipengaruhi oleh berbagai energi yang dipercaya memengaruhi kehidupan sehari-hari.
+
+Gunakan ramalan ini sebagai refleksi, bukan sebagai penentu keputusan hidup.
+  `,
+  category: "Explore",
+  author: "William Ciputra",
+  date: "16 Juni 2026",
+  image: "https://images.unsplash.com/photo-1519682337058-a94d519337bc",
+  hero: false,
+  editorPick: false,
+  readTime: "4 min read",
+},
+
+{
+  id: 12,
+  slug: "hubungan-sehat-dimulai-dari-komunikasi",
+  title: "Hubungan Sehat Selalu Dimulai dari Komunikasi yang Jujur",
+  excerpt:
+    "Psikolog menilai komunikasi terbuka menjadi fondasi utama hubungan yang sehat.",
+  content: `
+Komunikasi bukan hanya tentang berbicara, tetapi juga kemampuan mendengar dan memahami pasangan.
+
+Banyak konflik dalam hubungan sebenarnya berawal dari asumsi yang tidak pernah diklarifikasi.
+
+Membangun komunikasi yang sehat membantu pasangan menghadapi tantangan dengan lebih dewasa.
+  `,
+  category: "Explore",
+  author: "William Ciputra",
+  date: "15 Juni 2026",
+  image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2",
+  hero: false,
+  editorPick: false,
+  readTime: "5 min read",
+},
+
+{
+  id: 13,
+  slug: "misteri-rumah-tua-di-pinggir-kota",
+  title: "Misteri Rumah Tua di Pinggir Kota yang Masih Menyisakan Tanda Tanya",
+  excerpt:
+    "Cerita warga sekitar membuat bangunan tua ini menjadi salah satu kisah urban paling terkenal.",
+  content: `
+Selama bertahun-tahun, rumah tua itu menjadi bahan pembicaraan warga.
+
+Sebagian menganggapnya hanya cerita turun-temurun, sementara yang lain mengaku pernah mengalami kejadian yang sulit dijelaskan.
+
+Terlepas dari benar atau tidaknya cerita tersebut, kisah-kisah seperti ini selalu menjadi bagian dari folklore perkotaan.
+  `,
+  category: "Explore",
+  author: "William Ciputra",
+  date: "14 Juni 2026",
+  image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+  hero: false,
+  editorPick: false,
+  readTime: "6 min read",
+},
 ];
