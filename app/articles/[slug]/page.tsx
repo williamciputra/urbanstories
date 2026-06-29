@@ -93,14 +93,18 @@ export default async function ArticlePage({ params }: Props) {
                 {article.category}
               </Link>
 
-              <span>/</span>
+              {article.subcategory && (
+                <>
+                  <span>/</span>
 
-              <Link
-                href={`/${article.category.toLowerCase()}/${article.subcategory.toLowerCase()}`}
-                className="transition hover:text-black"
-              >
-                {article.subcategory}
-              </Link>
+                  <Link
+                    href={`/${article.category.toLowerCase()}/${article.subcategory.toLowerCase()}`}
+                    className="transition hover:text-black"
+                  >
+                    {article.subcategory}
+                  </Link>
+                </>
+              )}
             </nav>
 
             <h1 className="text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-neutral-900 md:text-7xl">
