@@ -22,7 +22,7 @@ export default function Home() {
           <LatestArticles />
         </section>
 
-        <section className="mt-32 pb-20">
+        <section className="mt-32 pb-8">
           <Newsletter />
         </section>
       </div>

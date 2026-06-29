@@ -1,9 +1,19 @@
 import Link from "next/link";
 
+const footerLinks = [
+  { name: "About Us", href: "/about" },
+  { name: "Redaksi", href: "/redaksi" },
+  { name: "Pedoman Media Siber", href: "/pedoman-media-siber" },
+  { name: "Disclaimer", href: "/disclaimer" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
+  { name: "Kontak", href: "/kontak" },
+];
+
 export default function Footer() {
   return (
-    <footer className="mt-40 border-t border-neutral-300 bg-[#FAF8F3]">
-      <div className="mx-auto max-w-7xl px-6 py-20">
+    <footer className="border-t border-neutral-300 bg-[#FAF8F3]">
+      <div className="mx-auto max-w-5xl px-6 py-16 text-center">
+
         <Link href="/">
           <h2 className="text-5xl font-semibold tracking-[-0.04em] text-neutral-900 transition hover:opacity-80">
             Urbanstories
@@ -14,109 +24,28 @@ export default function Footer() {
           Cerita yang Menginspirasi
         </p>
 
-        <div className="mt-14 grid gap-12 md:grid-cols-2">
-          <div>
-            <h3 className="text-xs uppercase tracking-[0.35em] text-neutral-500">
-              Explore
-            </h3>
+        <nav className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3">
 
-            <ul className="mt-6 space-y-3 text-neutral-700">
-              <li>
-                <Link
-                  href="/about"
-                  className="transition hover:text-black"
-                >
-                  About
-                </Link>
-              </li>
+          {footerLinks.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="text-sm text-neutral-600 transition hover:text-black"
+            >
+              {item.name}
+            </Link>
+          ))}
 
-              <li>
-                <Link
-                  href="/contact"
-                  className="transition hover:text-black"
-                >
-                  Contact
-                </Link>
-              </li>
+        </nav>
 
-              <li>
-                <Link
-                  href="/privacy-policy"
-                  className="transition hover:text-black"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
+        <div className="mt-10 border-t border-neutral-200 pt-6">
 
-              <li>
-                <Link
-                  href="/disclaimer"
-                  className="transition hover:text-black"
-                >
-                  Disclaimer
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-xs uppercase tracking-[0.35em] text-neutral-500">
-              Follow
-            </h3>
-
-            <ul className="mt-6 space-y-3 text-neutral-700">
-              <li>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-black"
-                >
-                  Instagram
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-black"
-                >
-                  LinkedIn
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://x.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-black"
-                >
-                  X
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://youtube.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-black"
-                >
-                  YouTube
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-16 border-t border-neutral-200 pt-8">
           <p className="text-sm text-neutral-500">
             © 2026 Urbanstories. All rights reserved.
           </p>
+
         </div>
+
       </div>
     </footer>
   );
