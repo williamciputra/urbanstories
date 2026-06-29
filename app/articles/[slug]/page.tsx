@@ -69,7 +69,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <ReadingProgress />
 
-      <Header activeCategory={article.category} />
+      <Header />
 
       <main className="min-h-screen bg-[#FAF8F3]">
         <article className="mx-auto max-w-7xl px-6 py-16">

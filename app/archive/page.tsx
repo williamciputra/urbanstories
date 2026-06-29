@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function IndexPage() {
   return (
     <>
-      <Header activeCategory="Index" />
+      <Header />
 
       <main className="min-h-screen bg-[#FAF8F3]">
         <div className="mx-auto max-w-7xl px-6 py-20">

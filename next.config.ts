@@ -9,6 +9,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  async redirects() {
+    return [
+      {
+        source: "/index",
+        destination: "/archive",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

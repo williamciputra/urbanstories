@@ -48,7 +48,11 @@ export default function MobileDrawer({
             {site.navigation.map((item) => (
               <li key={item}>
                 <Link
-                  href={`/category/${item.toLowerCase()}`}
+                  href={
+                    item === "Index"
+                      ? "/archive"
+                      : `/${item.toLowerCase()}`
+                  }
                   onClick={onClose}
                   className="text-xl text-black transition hover:text-neutral-500"
                 >

@@ -46,7 +46,7 @@ export default async function CategoryPage({
 
   return (
     <>
-      <Header activeCategory={formattedCategory} />
+      <Header />
 
       <main className="min-h-screen bg-[#FAF8F3]">
         <div className="mx-auto max-w-7xl px-6 py-20">

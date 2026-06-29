@@ -3,22 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import Search from "./Search";
 import MobileHeader from "./MobileHeader";
 import MobileDrawer from "./MobileDrawer";
 import { site } from "../data/site";
 
-interface HeaderProps {
-  activeCategory?: string;
-}
-
-export default function Header({
-  activeCategory,
-}: HeaderProps) {
+export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const pathname = usePathname();
 
   useEffect(() => {
@@ -41,14 +33,12 @@ export default function Header({
         }`}
       >
         <div className="mx-auto max-w-7xl px-6 py-5">
-
           <MobileHeader
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
 
-          <div className="hidden items-center justify-between lg:flex">
-
+          <div className="hidden lg:flex items-center justify-between">
             <div className="flex-shrink-0">
               <Link href="/">
                 <h1 className="text-[32px] font-semibold tracking-[-0.04em] text-neutral-900 transition hover:opacity-80">
@@ -62,34 +52,33 @@ export default function Header({
             </div>
 
             <nav>
-              <ul className="flex items-center gap-8 text-[15px] font-medium">
-                {site.navigation.map((item) => {
-                  const href = `/${item.toLowerCase()}`;
-
-                  const isActive =
-                    pathname.startsWith(href) ||
-                    activeCategory === item;
-
-                  return (
-                    <li key={item}>
-                      <Link
-                        href={href}
-                        className={`transition-colors duration-200 ${
-                          isActive
-                            ? "font-semibold text-black"
-                            : "text-neutral-700 hover:text-black"
-                        }`}
-                      >
-                        {item}
-                      </Link>
-                    </li>
-                  );
-                })}
+              <ul className="flex items-center gap-8 text-[15px] font-medium text-neutral-700">
+                {site.navigation.map((item) => (
+                  <li key={item}>
+                    <Link
+                      href={
+                        item === "Index"
+                          ? "/archive"
+                          : `/${item.toLowerCase()}`
+                      }
+                      className={`transition-colors duration-200 hover:text-black ${
+                        pathname.startsWith(
+                          item === "Index"
+                            ? "/archive"
+                            : `/${item.toLowerCase()}`
+                        )
+                          ? "text-black font-semibold"
+                          : "text-neutral-700"
+                      }`}
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </nav>
 
             <Search compact={false} />
-
           </div>
         </div>
       </header>
