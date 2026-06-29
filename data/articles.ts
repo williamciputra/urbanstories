@@ -6,7 +6,7 @@ export const articles: Article[] = [
   slug: "dari-garasi-ke-pasar-nasional",
   title: "Dari Garasi ke Pasar Nasional: Kisah UMKM yang Menolak Menyerah",
   excerpt:
-    "Urbanstories explores the people, ideas, businesses, and innovations that are transforming urban life.",
+    "Urbanstories explores the people, ideas, Newses, and innovations that are transforming urban life.",
   content: `Usaha besar sering kali lahir dari ruang yang sederhana. Banyak pelaku UMKM memulai perjalanan bisnisnya dari garasi rumah dengan modal terbatas, namun memiliki keyakinan yang besar terhadap produk yang mereka ciptakan.
 
 Perjalanan menuju pasar nasional tentu tidak mudah. Persaingan yang semakin ketat, perubahan perilaku konsumen, hingga tantangan digitalisasi menjadi hambatan yang harus dihadapi setiap hari.
@@ -18,11 +18,15 @@ Meski demikian, kemampuan untuk terus beradaptasi menjadi kunci utama. Dukungan 
 "Bisnis besar bukan dibangun oleh modal terbesar, melainkan oleh keberanian untuk terus mencoba."
 
 Kisah seperti inilah yang menjadi pengingat bahwa pertumbuhan bisnis bukan hanya soal modal, melainkan juga keberanian untuk terus belajar, berinovasi, dan tidak menyerah.`,
-  category: "Business",
+  category: "News",
+  subcategory: "Ekonomi",
+  tags: [],  
   author: "William Ciputra",
   date: "25 Juni 2026",
+  publishedAt: "2026-06-25T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+  imageCaption: "",
   hero: true,
   editorPick: false,
   readTime: "6 min read",
@@ -42,10 +46,14 @@ Di tengah hiruk pikuk kota, banyak orang mulai memilih kualitas dibanding kuanti
 Perubahan gaya hidup ini juga memengaruhi cara masyarakat bekerja, berbelanja, hingga menikmati waktu luang.
   `,
   category: "Lifestyle",
+  subcategory: "Kesehatan",
+  tags: [],
   author: "William Ciputra",
   date: "24 Juni 2026",
+  publishedAt: "2026-06-24T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1494526585095-c41746248156",
+  imageCaption: "",
   hero: false,
   editorPick: true,
   readTime: "6 min read",
@@ -65,10 +73,14 @@ Mulai dari pengaturan lalu lintas, pengelolaan energi, hingga pelayanan publik, 
 Meski menawarkan efisiensi, penerapan AI tetap harus memperhatikan privasi, keamanan data, dan etika penggunaan teknologi.
   `,
   category: "Technology",
+  subcategory: "AI",
+  tags: [],
   author: "William Ciputra",
   date: "24 Juni 2026",
+  publishedAt: "2026-06-24T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
+  imageCaption: "",
   hero: false,
   editorPick: true,
   readTime: "4 min read",
@@ -87,11 +99,15 @@ Marketplace, media sosial, hingga pembayaran digital membuka kesempatan bagi pro
 
 Dengan kualitas produk yang baik serta strategi pemasaran yang tepat, UMKM Indonesia memiliki peluang besar bersaing di tingkat internasional.
   `,
-  category: "Business",
+  category: "Entertainment",
+  subcategory: "Film",
+  tags: [],
   author: "William Ciputra",
   date: "23 Juni 2026",
+  publishedAt: "2026-06-23T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a",
+  imageCaption: "",
   hero: false,
   editorPick: true,
   readTime: "5 min read",
@@ -110,11 +126,15 @@ Aktivitas ini membantu menjaga kesehatan jantung, meningkatkan kebugaran tubuh, 
 
 Tak membutuhkan biaya mahal, jalan kaki menjadi investasi kesehatan jangka panjang yang dapat dilakukan siapa saja.
   `,
-  category: "Health",
+  category: "Lifestyle",
+  subcategory: "Fashion",
+  tags: [],
   author: "William Ciputra",
   date: "22 Juni 2026",
+  publishedAt: "2026-06-22T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1514565131-fce0801e5785",
+  imageCaption: "",
   hero: false,
   editorPick: true,
   readTime: "3 min read",
@@ -134,10 +154,14 @@ Integrasi data, pembayaran digital, serta pemantauan armada secara real-time dih
 Transportasi modern juga menjadi langkah penting untuk mengurangi kemacetan dan emisi karbon.
   `,
   category: "News",
+  subcategory: "Nasional",
+  tags: [],
   author: "William Ciputra",
   date: "21 Juni 2026",
+  publishedAt: "2026-06-21T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1514565131-fce0801e5785",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "4 min read",
@@ -156,11 +180,15 @@ Selain menghemat energi, bangunan ramah lingkungan mampu menciptakan ruang yang 
 
 Arsitektur berkelanjutan diperkirakan akan menjadi standar pembangunan pada masa depan.
   `,
-  category: "Lifestyle",
+  category: "Sports",
+  subcategory: "-",
+  tags: [],
   author: "William Ciputra",
   date: "20 Juni 2026",
+  publishedAt: "2026-06-20T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1494526585095-c41746248156",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "5 min read",
@@ -169,21 +197,25 @@ Arsitektur berkelanjutan diperkirakan akan menjadi standar pembangunan pada masa
 {
   id: 8,
   slug: "startup-kesehatan",
-  title: "Startup HealthTech Indonesia Terus Bertumbuh",
+  title: "Startup LifestyleTech Indonesia Terus Bertumbuh",
   excerpt:
     "Inovasi digital membawa perubahan besar di sektor kesehatan.",
   content: `
-Startup HealthTech terus menghadirkan inovasi dalam layanan kesehatan digital.
+Startup LifestyleTech terus menghadirkan inovasi dalam layanan kesehatan digital.
 
 Mulai dari konsultasi dokter online hingga pemantauan kondisi pasien secara real-time, teknologi membuat layanan kesehatan menjadi lebih mudah diakses.
 
 Perkembangan ini diperkirakan akan terus meningkat dalam beberapa tahun ke depan.
   `,
   category: "Technology",
+  subcategory: "Apps",
+  tags: [],
   author: "William Ciputra",
   date: "19 Juni 2026",
+  publishedAt: "2026-06-19T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "4 min read",
@@ -202,11 +234,15 @@ Dukungan teknologi digital membuka peluang baru bagi para kreator untuk memasark
 
 Kolaborasi antara pemerintah, pelaku usaha, dan komunitas menjadi kunci pertumbuhan industri ini.
   `,
-  category: "Business",
+  category: "Entertainment",
+  subcategory: "Pop Art",
+  tags: [],
   author: "William Ciputra",
   date: "18 Juni 2026",
+  publishedAt: "2026-06-18T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "5 min read",
@@ -226,10 +262,14 @@ Trotoar yang nyaman, ruang terbuka hijau, dan akses transportasi publik membuat 
 Selain menyehatkan, konsep ini juga membantu mengurangi kemacetan serta polusi udara di kawasan perkotaan.
   `,
   category: "Lifestyle",
+  subcategory: "Travel",
+  tags: [],
   author: "William Ciputra",
   date: "17 Juni 2026",
+  publishedAt: "2026-06-17T08:00:00+07:00",
   image:
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "4 min read",
@@ -248,9 +288,13 @@ Mulai dari peluang karier, kondisi finansial, hingga hubungan asmara, semuanya d
 Gunakan ramalan ini sebagai refleksi, bukan sebagai penentu keputusan hidup.
   `,
   category: "Explore",
+  subcategory: "Horoscope",
+  tags: [],
   author: "William Ciputra",
   date: "16 Juni 2026",
+  publishedAt: "2026-06-16T08:00:00+07:00",
   image: "https://images.unsplash.com/photo-1519682337058-a94d519337bc",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "4 min read",
@@ -270,9 +314,13 @@ Banyak konflik dalam hubungan sebenarnya berawal dari asumsi yang tidak pernah d
 Membangun komunikasi yang sehat membantu pasangan menghadapi tantangan dengan lebih dewasa.
   `,
   category: "Explore",
+  subcategory: "Intimacy",
+  tags: [],
   author: "William Ciputra",
   date: "15 Juni 2026",
+  publishedAt: "2026-06-15T08:00:00+07:00",
   image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "5 min read",
@@ -292,9 +340,13 @@ Sebagian menganggapnya hanya cerita turun-temurun, sementara yang lain mengaku p
 Terlepas dari benar atau tidaknya cerita tersebut, kisah-kisah seperti ini selalu menjadi bagian dari folklore perkotaan.
   `,
   category: "Explore",
+  subcategory: "Horror",
+  tags: [],
   author: "William Ciputra",
   date: "14 Juni 2026",
+  publishedAt: "2026-06-14T08:00:00+07:00",
   image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+  imageCaption: "",
   hero: false,
   editorPick: false,
   readTime: "6 min read",

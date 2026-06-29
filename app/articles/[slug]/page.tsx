@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import ReadingProgress from "../../../components/ReadingProgress";
 import RelatedArticles from "../../../components/RelatedArticles";
-import ShareArticle from "../../../components/ShareArticle";
 
 interface Props {
   params: Promise<{
@@ -28,7 +27,6 @@ export async function generateMetadata({
 
   return {
     title: article.title,
-
     description: article.excerpt,
 
     openGraph: {
@@ -69,54 +67,56 @@ export default async function ArticlePage({ params }: Props) {
       <ReadingProgress />
 
       <main className="min-h-screen bg-[#FAF8F3]">
-        <article className="mx-auto max-w-5xl px-6 py-24">
+        <article className="mx-auto max-w-7xl px-6 py-16">
 
-          <p className="uppercase tracking-[0.3em] text-sm text-neutral-500">
-            {article.category}
-          </p>
+          <div className="ml-16 max-w-3xl">
 
-          <h1 className="mt-6 text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-neutral-900 md:text-7xl">
-            {article.title}
-          </h1>
+            <h1 className="text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-neutral-900 md:text-7xl">
+              {article.title}
+            </h1>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-neutral-500">
-            <span>Oleh {article.author}</span>
-            <span>•</span>
-            <span>{article.date}</span>
-            <span>•</span>
-            <span>{article.readTime}</span>
-          </div>
+            <div className="mt-6 text-sm text-neutral-500">
+              <p>{article.author}</p>
 
-          <div className="mt-12 border-t border-neutral-300"></div>
-
-          <div className="relative mt-12 aspect-[16/9] overflow-hidden">
-            <Image
-              src={article.image}
-              alt={article.title}
-              fill
-              priority
-              unoptimized
-              className="object-cover"
-            />
-          </div>
-
-          <div className="mx-auto mt-20 max-w-3xl space-y-10">
-            {paragraphs.map((paragraph, index) => (
-              <p
-                key={index}
-                className="text-[22px] leading-[2.1] text-neutral-700"
-              >
-                {paragraph}
+              <p className="mt-1">
+                {article.date} • {article.readTime}
               </p>
-            ))}
+            </div>
+
+            <div className="relative mt-10 aspect-[3/2] overflow-hidden">
+              <Image
+                src={article.image}
+                alt={article.title}
+                fill
+                priority
+                unoptimized
+                className="object-cover"
+              />
+            </div>
+
+            {article.imageCaption && (
+              <p className="mt-3 text-sm italic text-neutral-500">
+                {article.imageCaption}
+              </p>
+            )}
+
+            <div className="mt-12 space-y-8">
+              {paragraphs.map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-[20px] leading-[2] text-neutral-700"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            <RelatedArticles
+              currentSlug={article.slug}
+              currentCategory={article.category}
+            />
+
           </div>
-
-          <ShareArticle />
-
-          <RelatedArticles
-            currentSlug={article.slug}
-            currentCategory={article.category}
-          />
 
         </article>
       </main>

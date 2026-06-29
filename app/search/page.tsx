@@ -26,18 +26,18 @@ export default async function SearchPage({
 
   const results = keyword
     ? articles.filter((article) => {
-        const target = [
-          article.title,
-          article.excerpt,
-          article.category,
-          article.author,
-          article.content,
-        ]
-          .join(" ")
-          .toLowerCase();
+      const target = [
+        article.title,
+        article.excerpt,
+        article.category,
+        article.author,
+        article.content,
+      ]
+        .join(" ")
+        .toLowerCase();
 
-        return target.includes(keyword);
-      })
+      return target.includes(keyword);
+    })
     : [];
 
   return (
@@ -62,7 +62,7 @@ export default async function SearchPage({
               <>
                 Menampilkan hasil untuk{" "}
                 <span className="font-semibold text-neutral-900">
-                  "{q}"
+                  &quot;{q}&quot;
                 </span>
               </>
             ) : (
