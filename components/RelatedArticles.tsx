@@ -4,20 +4,22 @@ import { articles } from "../data/articles";
 
 interface RelatedArticlesProps {
   currentSlug: string;
-  currentCategory: string;
+  currentTags: string[];
 }
 
 export default function RelatedArticles({
   currentSlug,
-  currentCategory,
+  currentTags,
 }: RelatedArticlesProps) {
   const relatedArticles = articles
-    .filter(
-      (article) =>
-        article.slug !== currentSlug &&
-        article.category === currentCategory
-    )
-    .slice(0, 3);
+    .filter((article) => {
+      if (article.slug === currentSlug) return false;
+
+      return article.tags.some((tag) =>
+        currentTags.includes(tag)
+      );
+    })
+    .slice(0, 4);
 
   if (relatedArticles.length === 0) return null;
 
@@ -27,7 +29,7 @@ export default function RelatedArticles({
         Artikel Terkait
       </h2>
 
-      <div className="mt-12 grid gap-10 md:grid-cols-3">
+      <div className="mt-12 grid gap-8 md:grid-cols-4">
         {relatedArticles.map((article) => (
           <Link
             key={article.id}
@@ -53,9 +55,10 @@ export default function RelatedArticles({
               {article.title}
             </h3>
 
-            <p className="mt-3 text-neutral-600 line-clamp-3">
-              {article.excerpt}
+            <p className="mt-3 text-sm text-neutral-500">
+              {article.date} • {article.readTime}
             </p>
+
           </Link>
         ))}
       </div>

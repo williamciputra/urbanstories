@@ -31,15 +31,15 @@ export default function ArticleCard({
         {article.category}
       </p>
 
-      <h2 className="mt-3 text-3xl font-bold leading-tight text-neutral-900 transition group-hover:opacity-70">
+      <h2 className="mt-3 text-2xl font-bold leading-snug text-neutral-900 transition group-hover:opacity-70">
         {article.title}
       </h2>
 
-      <p className="mt-4 leading-7 text-neutral-600">
+      <p className="mt-4 line-clamp-2 leading-7 text-neutral-600">
         {article.excerpt}
       </p>
 
-      <p className="mt-6 text-sm text-neutral-500">
+      <p className="mt-5 text-sm text-neutral-500">
         {article.date} • {article.readTime}
       </p>
     </Link>
