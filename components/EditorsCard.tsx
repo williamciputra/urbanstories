@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Article } from "../types/article";
+import type { Article } from "@/types/article";
 
 interface Props {
   article: Article;
@@ -8,10 +8,10 @@ interface Props {
 
 export default function EditorsCard({ article }: Props) {
   return (
-    <article className="border-b border-neutral-200 pb-6 last:border-b-0 last:pb-0">
+    <article className="border-b border-neutral-200 py-2 last:border-b-0 last:pb-0">
       <Link
         href={`/articles/${article.slug}`}
-        className="group grid grid-cols-[96px_1fr] gap-3 items-center"
+        className="group grid grid-cols-[84px_1fr] gap-3 items-center"
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
@@ -19,7 +19,7 @@ export default function EditorsCard({ article }: Props) {
             alt={article.title}
             fill
             unoptimized
-            sizes="96px"
+            sizes="84px"
             className="object-cover transition duration-500 group-hover:scale-105"
           />
         </div>
@@ -29,7 +29,7 @@ export default function EditorsCard({ article }: Props) {
             {article.category}
           </p>
 
-          <h3 className="mt-1 text-lg font-semibold leading-snug text-neutral-900 transition group-hover:opacity-70">
+          <h3 className="mt-1 text-[17px] font-semibold leading-snug text-neutral-900 transition group-hover:opacity-70">
             {article.title}
           </h3>
         </div>

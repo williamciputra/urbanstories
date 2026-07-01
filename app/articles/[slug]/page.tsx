@@ -63,7 +63,7 @@ export default async function ArticlePage({ params }: Props) {
   const paragraphs = article.content
     .trim()
     .split("\n\n")
-    .filter((text) => text.trim() !== "");
+    .filter((text: string) => text.trim() !== "");
 
   return (
     <>
@@ -143,7 +143,7 @@ export default async function ArticlePage({ params }: Props) {
             )}
 
             <div className="mt-12 space-y-8">
-              {paragraphs.map((paragraph, index) => (
+              {paragraphs.map((paragraph: string, index: number) => (
                 <div key={index}>
                   <p className="text-[20px] leading-[2] text-neutral-700">
                     {paragraph}
