@@ -29,7 +29,8 @@ export async function createArticle(
   });
 
   if (!res.ok) {
-    throw new Error("Failed to create article");
+    const error = await res.json();
+    throw new Error(error.error ?? "Failed to create article");
   }
 
   return res.json();

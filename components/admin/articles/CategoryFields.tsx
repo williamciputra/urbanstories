@@ -15,44 +15,53 @@ type Subcategory = {
   category_id: string;
 };
 
-export default function CategoryFields() {
+type CategoryFieldsProps = {
+  categoryId: string;
+  subcategoryId: string;
+  onCategoryChange: (value: string) => void;
+  onSubcategoryChange: (value: string) => void;
+};
+
+export default function CategoryFields({
+  categoryId,
+  subcategoryId,
+  onCategoryChange,
+  onSubcategoryChange,
+}: CategoryFieldsProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
-  const [categoryId, setCategoryId] = useState("");
-  const [subcategoryId, setSubcategoryId] = useState("");
-
   useEffect(() => {
-    async function loadData() {
-      const [categoryRes, subcategoryRes] = await Promise.all([
-        fetch("/api/categories"),
-        fetch("/api/subcategories"),
-      ]);
+  async function loadData() {
+    const [categoryRes, subcategoryRes] = await Promise.all([
+      fetch("/api/categories"),
+      fetch("/api/subcategories"),
+    ]);
 
-      const categoriesData = await categoryRes.json();
-      const subcategoriesData = await subcategoryRes.json();
+    const categoriesData = await categoryRes.json();
+    const subcategoriesData = await subcategoryRes.json();
 
-      setCategories(categoriesData);
-      setSubcategories(subcategoriesData);
+    setCategories(categoriesData);
+    setSubcategories(subcategoriesData);
 
-      if (categoriesData.length > 0) {
-        const firstCategory = categoriesData[0];
+    if (!categoryId && categoriesData.length > 0) {
+      const firstCategory = categoriesData[0];
 
-        setCategoryId(firstCategory.id);
+      onCategoryChange(firstCategory.id);
 
-        const firstSubcategory = subcategoriesData.find(
-          (item: Subcategory) =>
-            item.category_id === firstCategory.id
-        );
+      const firstSubcategory = subcategoriesData.find(
+        (item: Subcategory) =>
+          item.category_id === firstCategory.id
+      );
 
-        if (firstSubcategory) {
-          setSubcategoryId(firstSubcategory.id);
-        }
+      if (firstSubcategory) {
+        onSubcategoryChange(firstSubcategory.id);
       }
     }
+  }
 
-    loadData();
-  }, []);
+  loadData();
+}, [categoryId, onCategoryChange, onSubcategoryChange]);
 
   const filteredSubcategories = useMemo(() => {
     return subcategories.filter(
@@ -62,12 +71,12 @@ export default function CategoryFields() {
 
   useEffect(() => {
     if (filteredSubcategories.length === 0) {
-      setSubcategoryId("");
+      onSubcategoryChange("");
       return;
     }
 
-    setSubcategoryId(filteredSubcategories[0].id);
-  }, [categoryId]);
+    onSubcategoryChange(filteredSubcategories[0].id);
+  }, [categoryId, filteredSubcategories, onSubcategoryChange]);
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -78,7 +87,9 @@ export default function CategoryFields() {
 
         <select
           value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
+          onChange={(e) =>
+            onCategoryChange(e.target.value)
+          }
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900"
         >
           {categories.map((category) => (
@@ -101,7 +112,7 @@ export default function CategoryFields() {
           value={subcategoryId}
           disabled={filteredSubcategories.length === 0}
           onChange={(e) =>
-            setSubcategoryId(e.target.value)
+            onSubcategoryChange(e.target.value)
           }
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 disabled:bg-gray-100"
         >

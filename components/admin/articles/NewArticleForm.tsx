@@ -29,6 +29,12 @@ export default function NewArticleForm() {
   const [authorId, setAuthorId] =
     useState("");
 
+  const [categoryId, setCategoryId] =
+    useState("");
+
+  const [subcategoryId, setSubcategoryId] =
+    useState("");
+
   const [publishDate, setPublishDate] =
     useState("");
 
@@ -78,7 +84,12 @@ export default function NewArticleForm() {
         />
       </div>
 
-      <CategoryFields />
+      <CategoryFields
+        categoryId={categoryId}
+        subcategoryId={subcategoryId}
+        onCategoryChange={setCategoryId}
+        onSubcategoryChange={setSubcategoryId}
+      />
 
       <AuthorField
         value={authorId}
