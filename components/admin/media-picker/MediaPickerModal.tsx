@@ -5,11 +5,17 @@ import MediaPickerGrid from "./MediaPickerGrid";
 type MediaPickerModalProps = {
   open: boolean;
   onClose: () => void;
+  onSelect: (media: {
+    id: string;
+    title: string;
+    path: string;
+  }) => void;
 };
 
 export default function MediaPickerModal({
   open,
   onClose,
+  onSelect,
 }: MediaPickerModalProps) {
   if (!open) return null;
 
@@ -37,7 +43,12 @@ export default function MediaPickerModal({
             className="mb-6 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900"
           />
 
-          <MediaPickerGrid />
+          <MediaPickerGrid
+            onSelect={(media) => {
+              onSelect(media);
+              onClose();
+            }}
+          />
         </div>
       </div>
     </div>

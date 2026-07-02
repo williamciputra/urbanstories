@@ -3,7 +3,15 @@
 import { useState } from "react";
 import MediaPickerModal from "./MediaPickerModal";
 
-export default function FeaturedImageField() {
+type FeaturedImageFieldProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export default function FeaturedImageField({
+  value,
+  onChange,
+}: FeaturedImageFieldProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,6 +41,9 @@ export default function FeaturedImageField() {
       <MediaPickerModal
         open={open}
         onClose={() => setOpen(false)}
+        onSelect={(media) => {
+          onChange(media.id);
+        }}
       />
     </>
   );

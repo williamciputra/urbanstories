@@ -8,9 +8,15 @@ type MediaItem = {
   path: string;
 };
 
+type MediaPickerGridProps = {
+  onSelect: (media: MediaItem) => void;
+};
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
-export default function MediaPickerGrid() {
+export default function MediaPickerGrid({
+  onSelect,
+}: MediaPickerGridProps) {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +53,7 @@ export default function MediaPickerGrid() {
           <button
             key={image.id}
             type="button"
+            onClick={() => onSelect(image)}
             className="overflow-hidden rounded-xl border border-gray-200 bg-white text-left transition hover:border-black"
           >
             <div className="aspect-[4/3] overflow-hidden bg-gray-100">

@@ -35,6 +35,9 @@ export default function NewArticleForm() {
   const [subcategoryId, setSubcategoryId] =
     useState("");
 
+  const [coverImageId, setCoverImageId] =
+    useState("");
+
   const [publishDate, setPublishDate] =
     useState("");
 
@@ -96,7 +99,10 @@ export default function NewArticleForm() {
         onChange={setAuthorId}
       />
 
-      <FeaturedImageField />
+      <FeaturedImageField
+        value={coverImageId}
+        onChange={setCoverImageId}
+      />
 
       <ExcerptField
         value={excerpt}
