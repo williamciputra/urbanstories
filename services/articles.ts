@@ -10,11 +10,11 @@ export type CreateArticlePayload = {
 
   author_id: string | null;
 
-  featured_media_id: string | null;
+  cover_image_id: string | null;
 
   status: "draft" | "scheduled" | "published" | "archived";
 
-  publish_at: string | null;
+  published_at: string | null;
 };
 
 export async function createArticle(
