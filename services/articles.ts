@@ -12,7 +12,11 @@ export type CreateArticlePayload = {
 
   cover_image_id: string | null;
 
-  status: "draft" | "scheduled" | "published" | "archived";
+  status:
+    | "draft"
+    | "scheduled"
+    | "published"
+    | "archived";
 
   published_at: string | null;
 };
@@ -30,7 +34,35 @@ export async function createArticle(
 
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.error ?? "Failed to create article");
+    throw new Error(
+      error.error ?? "Failed to create article"
+    );
+  }
+
+  return res.json();
+}
+
+export async function updateArticle(
+  id: string,
+  payload: CreateArticlePayload
+) {
+  const res = await fetch(
+    `/api/articles/${id}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type":
+          "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(
+      error.error ?? "Failed to update article"
+    );
   }
 
   return res.json();

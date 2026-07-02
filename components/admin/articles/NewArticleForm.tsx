@@ -20,24 +20,61 @@ function slugify(text: string) {
     .replace(/-+/g, "-");
 }
 
-export default function NewArticleForm() {
-  const [title, setTitle] = useState("");
-  const [excerpt, setExcerpt] = useState("");
+type InitialArticle = {
+  title: string;
+  excerpt: string;
+  status: ArticleStatus;
+
+  author_id: string | null;
+  category_id: string | null;
+  subcategory_id: string | null;
+
+  cover_image_id: string | null;
+};
+
+type NewArticleFormProps = {
+  mode?: "create" | "edit";
+  initialData?: InitialArticle;
+};
+
+export default function NewArticleForm({
+  mode = "create",
+  initialData,
+}: NewArticleFormProps) {
+  console.log("MODE:", mode);
+  console.log("INITIAL DATA:", initialData);
+  const [title, setTitle] = useState(
+    initialData?.title ?? ""
+  );
+
+  const [excerpt, setExcerpt] = useState(
+    initialData?.excerpt ?? ""
+  );
 
   const [status, setStatus] =
-    useState<ArticleStatus>("draft");
+    useState<ArticleStatus>(
+      initialData?.status ?? "draft"
+    );
 
   const [authorId, setAuthorId] =
-    useState("");
+    useState(
+      initialData?.author_id ?? ""
+    );
 
   const [categoryId, setCategoryId] =
-    useState("");
+    useState(
+      initialData?.category_id ?? ""
+    );
 
   const [subcategoryId, setSubcategoryId] =
-    useState("");
+    useState(
+      initialData?.subcategory_id ?? ""
+    );
 
   const [coverImageId, setCoverImageId] =
-    useState("");
+    useState(
+      initialData?.cover_image_id ?? ""
+    );
 
   const [publishDate, setPublishDate] =
     useState("");
