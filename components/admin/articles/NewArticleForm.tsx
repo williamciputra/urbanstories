@@ -1,15 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import CategoryFields from "./CategoryFields";
 import AuthorField from "./AuthorField";
 import ExcerptField from "./ExcerptField";
+import ContentField from "./ContentField";
 import ScheduleField from "./ScheduleField";
 import StatusField, { ArticleStatus } from "./StatusField";
 
 import FeaturedImageField from "@/components/admin/media-picker/FeaturedImageField";
-import { createArticle } from "@/services/articles";
+import {
+  createArticle,
+  updateArticle,
+} from "@/services/articles";
 
 function slugify(text: string) {
   return text
@@ -21,8 +29,12 @@ function slugify(text: string) {
 }
 
 type InitialArticle = {
+  id: string;
+
   title: string;
   excerpt: string;
+  content: string;
+
   status: ArticleStatus;
 
   author_id: string | null;
@@ -41,40 +53,26 @@ export default function NewArticleForm({
   mode = "create",
   initialData,
 }: NewArticleFormProps) {
-  console.log("MODE:", mode);
-  console.log("INITIAL DATA:", initialData);
-  const [title, setTitle] = useState(
-    initialData?.title ?? ""
-  );
+  const [title, setTitle] = useState("");
 
-  const [excerpt, setExcerpt] = useState(
-    initialData?.excerpt ?? ""
-  );
+  const [excerpt, setExcerpt] = useState("");
+
+  const [content, setContent] = useState("");
 
   const [status, setStatus] =
-    useState<ArticleStatus>(
-      initialData?.status ?? "draft"
-    );
+    useState<ArticleStatus>("draft");
 
   const [authorId, setAuthorId] =
-    useState(
-      initialData?.author_id ?? ""
-    );
+    useState("");
 
   const [categoryId, setCategoryId] =
-    useState(
-      initialData?.category_id ?? ""
-    );
+    useState("");
 
   const [subcategoryId, setSubcategoryId] =
-    useState(
-      initialData?.subcategory_id ?? ""
-    );
+    useState("");
 
   const [coverImageId, setCoverImageId] =
-    useState(
-      initialData?.cover_image_id ?? ""
-    );
+    useState("");
 
   const [publishDate, setPublishDate] =
     useState("");
@@ -85,6 +83,25 @@ export default function NewArticleForm({
   const [saving, setSaving] =
     useState(false);
 
+  useEffect(() => {
+    if (!initialData) return;
+
+    setTitle(initialData.title);
+    setExcerpt(initialData.excerpt);
+    setContent(initialData.content);
+
+    setStatus(initialData.status);
+
+    setAuthorId(initialData.author_id ?? "");
+    setCategoryId(initialData.category_id ?? "");
+    setSubcategoryId(
+      initialData.subcategory_id ?? ""
+    );
+    setCoverImageId(
+      initialData.cover_image_id ?? ""
+    );
+  }, [initialData]);
+
   const slug = useMemo(
     () => slugify(title),
     [title]
@@ -94,12 +111,12 @@ export default function NewArticleForm({
     try {
       setSaving(true);
 
-      await createArticle({
+      const payload = {
         title,
         slug,
 
         excerpt,
-        content: "",
+        content,
 
         category_id: categoryId || null,
         subcategory_id: subcategoryId || null,
@@ -111,12 +128,26 @@ export default function NewArticleForm({
         status,
 
         published_at: null,
-      });
+      };
+
+      if (
+        mode === "edit" &&
+        initialData
+      ) {
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+      } else {
+        await createArticle(payload);
+      }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
       } else {
-        console.error("Gagal menyimpan draft.");
+        console.error(
+          "Gagal menyimpan artikel."
+        );
       }
     } finally {
       setSaving(false);
@@ -181,6 +212,11 @@ export default function NewArticleForm({
       <ExcerptField
         value={excerpt}
         onChange={setExcerpt}
+      />
+
+      <ContentField
+        value={content}
+        onChange={setContent}
       />
 
       <StatusField
