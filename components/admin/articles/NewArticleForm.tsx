@@ -11,7 +11,7 @@ import AuthorField from "./AuthorField";
 import ExcerptField from "./ExcerptField";
 import ContentField from "./ContentField";
 import ScheduleField from "./ScheduleField";
-import StatusField, { ArticleStatus } from "./StatusField";
+import { ArticleStatus } from "./StatusField";
 
 import FeaturedImageField from "@/components/admin/media-picker/FeaturedImageField";
 import {
@@ -19,14 +19,7 @@ import {
   updateArticle,
 } from "@/services/articles";
 
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
+import { slugify } from "@/lib/utils/slugify";
 
 type InitialArticle = {
   id: string;
@@ -125,7 +118,7 @@ export default function NewArticleForm({
 
         cover_image_id: coverImageId || null,
 
-        status,
+        status: "draft" as const,
 
         published_at: null,
       };
@@ -147,6 +140,53 @@ export default function NewArticleForm({
       } else {
         console.error(
           "Gagal menyimpan artikel."
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handlePublish() {
+    try {
+      setSaving(true);
+
+      const payload = {
+        title,
+        slug,
+
+        excerpt,
+        content,
+
+        category_id: categoryId || null,
+        subcategory_id: subcategoryId || null,
+
+        author_id: authorId || null,
+
+        cover_image_id: coverImageId || null,
+
+        status: "published" as const,
+
+        published_at: new Date().toISOString(),
+      };
+
+      if (
+        mode === "edit" &&
+        initialData
+      ) {
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+      } else {
+        await createArticle(payload);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error(
+          "Gagal mempublikasikan artikel."
         );
       }
     } finally {
@@ -219,28 +259,23 @@ export default function NewArticleForm({
         onChange={setContent}
       />
 
-      <StatusField
-        value={status}
-        onChange={setStatus}
-      />
-
-      {status === "scheduled" && (
-        <ScheduleField
-          date={publishDate}
-          time={publishTime}
-          onDateChange={setPublishDate}
-          onTimeChange={setPublishTime}
-        />
-      )}
-
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
         <button
           type="button"
           onClick={handleSaveDraft}
           disabled={saving}
-          className="rounded-lg bg-black px-6 py-3 text-white transition hover:bg-gray-800 disabled:opacity-50"
+          className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
         >
-          {saving ? "Saving..." : "Save Draft"}
+          Save Draft
+        </button>
+
+        <button
+          type="button"
+          onClick={handlePublish}
+          disabled={saving}
+          className="rounded-lg bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
+        >
+          {saving ? "Publishing..." : "Publish"}
         </button>
       </div>
 
