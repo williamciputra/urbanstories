@@ -23,13 +23,9 @@ export default function AuthorField({
     async function loadAuthors() {
       try {
         const res = await fetch("/api/authors");
-        const data = await res.json();
+        const data: Author[] = await res.json();
 
         setAuthors(data);
-
-        if (!value && data.length > 0) {
-          onChange(data[0].id);
-        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -40,19 +36,23 @@ export default function AuthorField({
     loadAuthors();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="text-sm text-gray-500">
-        Loading authors...
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (loading) return;
+
+    if (value) return;
+
+    if (authors.length > 0) {
+      onChange(authors[0].id);
+    }
+  }, [loading, authors, value, onChange]);
+
+  if (loading) return null;
 
   return (
     <div>
       <label
         htmlFor="author"
-        className="mb-2 block text-sm font-medium text-gray-700"
+        className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500"
       >
         Author
       </label>
@@ -61,7 +61,7 @@ export default function AuthorField({
         id="author"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-black"
+        className="h-10 w-[150px] rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-black appearance-none outline-none focus:border-black"
       >
         {authors.map((author) => (
           <option

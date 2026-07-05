@@ -30,38 +30,48 @@ export default function CategoryFields({
 }: CategoryFieldsProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  async function loadData() {
-    const [categoryRes, subcategoryRes] = await Promise.all([
-      fetch("/api/categories"),
-      fetch("/api/subcategories"),
-    ]);
+    async function loadData() {
+      try {
+        const [categoryRes, subcategoryRes] = await Promise.all([
+          fetch("/api/categories"),
+          fetch("/api/subcategories"),
+        ]);
 
-    const categoriesData = await categoryRes.json();
-    const subcategoriesData = await subcategoryRes.json();
-
-    setCategories(categoriesData);
-    setSubcategories(subcategoriesData);
-
-    if (!categoryId && categoriesData.length > 0) {
-      const firstCategory = categoriesData[0];
-
-      onCategoryChange(firstCategory.id);
-
-      const firstSubcategory = subcategoriesData.find(
-        (item: Subcategory) =>
-          item.category_id === firstCategory.id
-      );
-
-      if (firstSubcategory) {
-        onSubcategoryChange(firstSubcategory.id);
+        setCategories(await categoryRes.json());
+        setSubcategories(await subcategoryRes.json());
+      } finally {
+        setLoading(false);
       }
     }
-  }
 
-  loadData();
-}, [categoryId, onCategoryChange, onSubcategoryChange]);
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    if (loading || categoryId || categories.length === 0) return;
+
+    const first = categories[0];
+
+    onCategoryChange(first.id);
+
+    const firstSub = subcategories.find(
+      (item) => item.category_id === first.id
+    );
+
+    if (firstSub) {
+      onSubcategoryChange(firstSub.id);
+    }
+  }, [
+    loading,
+    categoryId,
+    categories,
+    subcategories,
+    onCategoryChange,
+    onSubcategoryChange,
+  ]);
 
   const filteredSubcategories = useMemo(() => {
     return subcategories.filter(
@@ -70,18 +80,34 @@ export default function CategoryFields({
   }, [subcategories, categoryId]);
 
   useEffect(() => {
-    if (filteredSubcategories.length === 0) {
-      onSubcategoryChange("");
+    if (loading || !categoryId) return;
+
+    if (
+      subcategoryId &&
+      filteredSubcategories.some(
+        (item) => item.id === subcategoryId
+      )
+    ) {
       return;
     }
 
-    onSubcategoryChange(filteredSubcategories[0].id);
-  }, [categoryId, filteredSubcategories, onSubcategoryChange]);
+    onSubcategoryChange(
+      filteredSubcategories[0]?.id ?? ""
+    );
+  }, [
+    loading,
+    categoryId,
+    subcategoryId,
+    filteredSubcategories,
+    onSubcategoryChange,
+  ]);
+
+  if (loading) return null;
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <>
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
           Category
         </label>
 
@@ -90,7 +116,7 @@ export default function CategoryFields({
           onChange={(e) =>
             onCategoryChange(e.target.value)
           }
-          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900"
+          className="h-10 w-[140px] rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-black appearance-none focus:border-black focus:outline-none"
         >
           {categories.map((category) => (
             <option
@@ -104,22 +130,20 @@ export default function CategoryFields({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
           Subcategory
         </label>
 
         <select
           value={subcategoryId}
-          disabled={filteredSubcategories.length === 0}
+          disabled={!filteredSubcategories.length}
           onChange={(e) =>
             onSubcategoryChange(e.target.value)
           }
-          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 disabled:bg-gray-100"
+          className="h-10 w-[180px] rounded-md border border-gray-300 bg-white px-3 text-sm font-medium text-black appearance-none focus:border-black focus:outline-none disabled:bg-gray-100"
         >
           {filteredSubcategories.length === 0 ? (
-            <option value="">
-              No subcategory
-            </option>
+            <option>No subcategory</option>
           ) : (
             filteredSubcategories.map((subcategory) => (
               <option
@@ -132,6 +156,6 @@ export default function CategoryFields({
           )}
         </select>
       </div>
-    </div>
+    </>
   );
 }

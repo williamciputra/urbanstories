@@ -7,6 +7,7 @@ import Search from "./Search";
 import MobileHeader from "./MobileHeader";
 import MobileDrawer from "./MobileDrawer";
 import { site } from "../data/site";
+import { navigation } from "@/data/navigation";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,9 +29,8 @@ export default function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b border-neutral-200 bg-[#FAF8F3] transition-all duration-300 ${
-          isScrolled ? "shadow-sm" : ""
-        }`}
+        className={`sticky top-0 z-50 border-b border-neutral-200 bg-[#FAF8F3] transition-all duration-300 ${isScrolled ? "shadow-sm" : ""
+          }`}
       >
         <div className="mx-auto max-w-7xl px-6 py-5">
           <MobileHeader
@@ -53,26 +53,36 @@ export default function Header() {
 
             <nav>
               <ul className="flex items-center gap-8 text-[15px] font-medium text-neutral-700">
-                {site.navigation.map((item) => (
-                  <li key={item}>
+                {navigation.map((item) => (
+                  <li
+                    key={item.name}
+                    className="group relative"
+                  >
                     <Link
-                      href={
-                        item === "Index"
-                          ? "/archive"
-                          : `/${item.toLowerCase()}`
-                      }
-                      className={`transition-colors duration-200 hover:text-black ${
-                        pathname.startsWith(
-                          item === "Index"
-                            ? "/archive"
-                            : `/${item.toLowerCase()}`
-                        )
-                          ? "text-black font-semibold"
+                      href={item.href}
+                      className={`transition-colors duration-200 hover:text-black ${pathname.startsWith(item.href)
+                          ? "font-semibold text-black"
                           : "text-neutral-700"
-                      }`}
+                        }`}
                     >
-                      {item}
+                      {item.name}
                     </Link>
+
+                    {item.children.length > 0 && (
+                      <div className="invisible absolute left-0 top-full z-50 mt-3 min-w-[220px] rounded-lg border border-neutral-200 bg-white py-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:opacity-100">
+
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="block px-5 py-2 text-sm text-neutral-700 transition hover:bg-neutral-100 hover:text-black"
+                          >
+                            {child.name}
+                          </Link>
+                        ))}
+
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

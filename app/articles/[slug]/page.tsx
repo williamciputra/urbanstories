@@ -3,9 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { articles } from "../../../data/articles";
+import {
+  getArticleBySlug,
+} from "@/services/public/articles";
+
 import ReadingProgress from "../../../components/ReadingProgress";
 import RelatedArticles from "../../../components/RelatedArticles";
+import ArticleSchema from "@/components/seo/ArticleSchema";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 
@@ -20,7 +25,8 @@ export async function generateMetadata({
 }: Props): Promise<Metadata> {
   const { slug } = await params;
 
-  const article = articles.find((item) => item.slug === slug);
+  const article =
+    await getArticleBySlug(slug);
 
   if (!article) {
     return {
@@ -28,25 +34,67 @@ export async function generateMetadata({
     };
   }
 
+  const imageUrl = article.media
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
+    : undefined;
+
   return {
     title: article.title,
+
     description: article.excerpt,
 
+    alternates: {
+      canonical: `/articles/${article.slug}`,
+    },
+
+    authors: [
+      {
+        name:
+          article.authors?.name ??
+          "Urbanstories",
+      },
+    ],
+
+    keywords: article.tags,
+
     openGraph: {
+      type: "article",
+
+      url: `https://urbanstories.id/articles/${article.slug}`,
+
       title: article.title,
+
       description: article.excerpt,
-      images: [
-        {
-          url: article.image,
-        },
-      ],
+
+      publishedTime:
+        article.published_at,
+
+      authors: article.authors?.name
+        ? [article.authors.name]
+        : [],
+
+      images: imageUrl
+        ? [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: article.title,
+          },
+        ]
+        : [],
     },
 
     twitter: {
       card: "summary_large_image",
+
       title: article.title,
+
       description: article.excerpt,
-      images: [article.image],
+
+      images: imageUrl
+        ? [imageUrl]
+        : [],
     },
   };
 }
@@ -54,19 +102,35 @@ export async function generateMetadata({
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
 
-  const article = articles.find((item) => item.slug === slug);
+  const article =
+    await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const paragraphs = article.content
-    .trim()
-    .split("\n\n")
-    .filter((text: string) => text.trim() !== "");
+  const breadcrumbs = [
+    {
+      name: "Home",
+      url: "https://urbanstories.id",
+    },
+    {
+      name:
+        article.categories?.name ?? "",
+      url: `https://urbanstories.id/${article.categories?.name.toLowerCase()}`,
+    },
+    {
+      name: article.title,
+      url: `https://urbanstories.id/articles/${article.slug}`,
+    },
+  ];
 
   return (
     <>
+
+      <ArticleSchema article={article} />
+
+      <BreadcrumbSchema items={breadcrumbs} />
       <ReadingProgress />
 
       <Header />
@@ -87,21 +151,21 @@ export default async function ArticlePage({ params }: Props) {
               <span>/</span>
 
               <Link
-                href={`/${article.category.toLowerCase()}`}
+                href={`/${article.categories?.name.toLowerCase()}`}
                 className="transition hover:text-black"
               >
-                {article.category}
+                {article.categories?.name}
               </Link>
 
-              {article.subcategory && (
+              {article.subcategories?.name && (
                 <>
                   <span>/</span>
 
                   <Link
-                    href={`/${article.category.toLowerCase()}/${article.subcategory.toLowerCase()}`}
+                    href={`/${article.categories?.name.toLowerCase()}/${article.subcategories.name.toLowerCase()}`}
                     className="transition hover:text-black"
                   >
-                    {article.subcategory}
+                    {article.subcategories.name}
                   </Link>
                 </>
               )}
@@ -113,21 +177,25 @@ export default async function ArticlePage({ params }: Props) {
 
             <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-neutral-500">
 
-              <span>Oleh {article.author}</span>
+              <span>Oleh {article.authors?.name}</span>
 
               <span>•</span>
 
-              <span>{article.date}</span>
-
-              <span>•</span>
-
-              <span>{article.readTime}</span>
+              <span>
+                {new Date(
+                  article.published_at
+                ).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
 
             </div>
 
             <div className="relative mt-10 aspect-[3/2] overflow-hidden">
               <Image
-                src={article.image}
+                src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media?.path}`}
                 alt={article.title}
                 fill
                 priority
@@ -136,36 +204,18 @@ export default async function ArticlePage({ params }: Props) {
               />
             </div>
 
-            {article.imageCaption && (
+            {article.media?.title && (
               <p className="mt-3 text-sm italic text-neutral-500">
-                {article.imageCaption}
+                {article.media.title}
               </p>
             )}
 
-            <div className="mt-12 space-y-8">
-              {paragraphs.map((paragraph: string, index: number) => (
-                <div key={index}>
-                  <p className="text-[20px] leading-[2] text-neutral-700">
-                    {paragraph}
-                  </p>
-
-                  {index === 1 && (
-                    <p className="mt-6 text-lg leading-8 text-neutral-800">
-                      <span className="font-semibold">
-                        Baca juga:{" "}
-                      </span>
-
-                      <Link
-                        href="/articles/mengapa-kota-ramah-pejalan-kaki"
-                        className="font-bold text-blue-600 underline underline-offset-2 hover:text-blue-700"
-                      >
-                        Mengapa Kota Ramah Pejalan Kaki Membuat Hidup Lebih Berkualitas
-                      </Link>
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
+            <div
+              className="article-content mt-12"
+              dangerouslySetInnerHTML={{
+                __html: article.content,
+              }}
+            />
 
             <RelatedArticles
               currentSlug={article.slug}

@@ -1,11 +1,10 @@
-import { articles } from "../data/articles";
+import type { HomepageArticle } from "@/services/public/articles";
+
 import NewsFeedCard from "./NewsFeedCard";
 
-type Article = (typeof articles)[number];
-
-interface NewsFeedProps {
-  articles: Article[];
-}
+type NewsFeedProps = {
+  articles: HomepageArticle[];
+};
 
 export default function NewsFeed({
   articles,
@@ -24,7 +23,6 @@ export default function NewsFeed({
       </div>
 
       <nav className="mt-10 flex items-center justify-center gap-8 text-sm">
-
         <button
           disabled
           className="cursor-not-allowed text-neutral-400"
@@ -42,7 +40,6 @@ export default function NewsFeed({
         >
           Next
         </button>
-
       </nav>
     </>
   );

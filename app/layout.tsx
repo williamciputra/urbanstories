@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import OrganizationSchema from "@/components/seo/OrganizationSchema";
+import WebSiteSchema from "@/components/seo/WebSiteSchema";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://urbanstories.id"),
+  applicationName: "Urbanstories",
 
   title: {
     default: "Urbanstories | Cerita yang Menginspirasi",
@@ -44,6 +48,10 @@ export const metadata: Metadata = {
 
   publisher: "Urbanstories",
 
+  alternates: {
+    canonical: "/",
+  },
+
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -73,6 +81,22 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  referrer: "origin-when-cross-origin",
+
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
   },
 
   manifest: "/manifest.webmanifest",
@@ -94,7 +118,19 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+
+        <OrganizationSchema />
+
+        <WebSiteSchema />
+
+        <Toaster
+          position="top-right"
+          richColors
+          closeButton
+        />
+
         {children}
+
       </body>
     </html>
   );

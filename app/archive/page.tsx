@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import IndexFeed from "../../components/IndexFeed";
-import { articles } from "../../data/articles";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import IndexFeed from "@/components/IndexFeed";
+
+import { getIndexArticles } from "@/services/public/articles";
 
 export const metadata: Metadata = {
   title: "Index | Urbanstories",
@@ -12,15 +13,20 @@ export const metadata: Metadata = {
     "Telusuri seluruh artikel Urbanstories berdasarkan tanggal publikasi.",
 };
 
-export default function IndexPage() {
+export default async function IndexPage() {
+  const articles =
+    await getIndexArticles();
+
   return (
     <>
       <Header />
 
       <main className="min-h-screen bg-[#FAF8F3]">
+
         <div className="mx-auto max-w-7xl px-6 py-20">
 
           <nav className="flex items-center gap-2 text-sm text-neutral-500">
+
             <Link
               href="/"
               className="transition hover:text-black"
@@ -33,13 +39,19 @@ export default function IndexPage() {
             <span className="font-medium text-neutral-900">
               Index
             </span>
+
           </nav>
 
           <div className="mt-10">
-            <IndexFeed articles={articles} />
+
+            <IndexFeed
+              articles={articles}
+            />
+
           </div>
 
         </div>
+
       </main>
 
       <Footer />

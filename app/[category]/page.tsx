@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import NewsFeed from "../../components/NewsFeed";
-import { articles } from "../../data/articles";
+
+import { getArticlesByCategory } from "@/services/public/articles";
+import { getCategoryName } from "@/lib/taxonomy/categories";
 
 interface Props {
   params: Promise<{
@@ -19,7 +21,7 @@ export async function generateMetadata({
   const { category } = await params;
 
   const formattedCategory =
-    category.charAt(0).toUpperCase() + category.slice(1);
+    getCategoryName(category);
 
   return {
     title: `${formattedCategory} | Urbanstories`,
@@ -35,10 +37,8 @@ export default async function CategoryPage({
   const formattedCategory =
     category.charAt(0).toUpperCase() + category.slice(1);
 
-  const categoryArticles = articles.filter(
-    (article) =>
-      article.category.toLowerCase() === category.toLowerCase()
-  );
+  const categoryArticles =
+    await getArticlesByCategory(category);
 
   if (categoryArticles.length === 0) {
     notFound();

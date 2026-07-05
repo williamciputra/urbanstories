@@ -32,21 +32,23 @@ export async function POST(request: Request) {
       .from("covers")
       .getPublicUrl(fileName);
 
-    const { error: dbError } = await supabase.from("media").insert({
-      title: file.name,
-      filename: fileName,
-      path: fileName,
-      alt_text: file.name,
-    });
+    const { data: media, error: dbError } =
+      await supabase
+        .from("media")
+        .insert({
+          title: file.name,
+          filename: fileName,
+          path: fileName,
+          caption: "",
+        })
+        .select()
+        .single();
 
     if (dbError) {
       throw dbError;
     }
 
-    return NextResponse.json({
-      success: true,
-      url: publicUrl.publicUrl,
-    });
+    return NextResponse.json(media);
   } catch (error) {
     console.error(error);
 

@@ -2,7 +2,13 @@
 
 import { useRef, useState } from "react";
 
-export default function UploadButton() {
+type UploadButtonProps = {
+  onUploaded?: () => void;
+};
+
+export default function UploadButton({
+  onUploaded,
+}: UploadButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -12,17 +18,26 @@ export default function UploadButton() {
     const formData = new FormData();
     formData.append("file", file);
 
+    console.log("[UPLOAD] START");
+
     const res = await fetch("/api/media/upload", {
       method: "POST",
       body: formData,
     });
 
+    console.log("[UPLOAD] FETCH DONE");
+
     setUploading(false);
 
     if (!res.ok) {
+      console.log("[UPLOAD] FAILED");
       alert("Upload gagal");
       return;
     }
+
+    const result = await res.json();
+
+    console.log("[UPLOAD] JSON", result);
 
     window.location.reload();
   }
@@ -41,6 +56,7 @@ export default function UploadButton() {
       />
 
       <button
+        type="button"
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
         className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800"

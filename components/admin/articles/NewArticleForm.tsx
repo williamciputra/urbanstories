@@ -6,10 +6,14 @@ import {
   useState,
 } from "react";
 
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 import CategoryFields from "./CategoryFields";
 import AuthorField from "./AuthorField";
 import ExcerptField from "./ExcerptField";
 import ContentField from "./ContentField";
+import TagsField from "./TagsField";
 import ScheduleField from "./ScheduleField";
 import { ArticleStatus } from "./StatusField";
 
@@ -35,6 +39,10 @@ type InitialArticle = {
   subcategory_id: string | null;
 
   cover_image_id: string | null;
+
+  tags: string[];
+
+  is_top_story: boolean;
 };
 
 type NewArticleFormProps = {
@@ -48,9 +56,14 @@ export default function NewArticleForm({
 }: NewArticleFormProps) {
   const [title, setTitle] = useState("");
 
-  const [excerpt, setExcerpt] = useState("");
+  const [excerpt, setExcerpt] =
+    useState("");
 
-  const [content, setContent] = useState("");
+  const [content, setContent] =
+    useState("");
+
+  const [tags, setTags] =
+    useState("");
 
   const [status, setStatus] =
     useState<ArticleStatus>("draft");
@@ -67,6 +80,9 @@ export default function NewArticleForm({
   const [coverImageId, setCoverImageId] =
     useState("");
 
+  const [isTopStory, setIsTopStory] =
+    useState(false);
+
   const [publishDate, setPublishDate] =
     useState("");
 
@@ -74,6 +90,9 @@ export default function NewArticleForm({
     useState("");
 
   const [saving, setSaving] =
+    useState(false);
+
+  const [showSchedule, setShowSchedule] =
     useState(false);
 
   useEffect(() => {
@@ -93,6 +112,14 @@ export default function NewArticleForm({
     setCoverImageId(
       initialData.cover_image_id ?? ""
     );
+
+    setTags(
+      initialData.tags.join(", ")
+    );
+
+    setIsTopStory(
+      initialData.is_top_story ?? false
+    );
   }, [initialData]);
 
   const slug = useMemo(
@@ -100,7 +127,10 @@ export default function NewArticleForm({
     [title]
   );
 
+  const router = useRouter();
+
   async function handleSaveDraft() {
+    if (saving) return;
     try {
       setSaving(true);
 
@@ -117,6 +147,13 @@ export default function NewArticleForm({
         author_id: authorId || null,
 
         cover_image_id: coverImageId || null,
+
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+
+        is_top_story: isTopStory,
 
         status: "draft" as const,
 
@@ -132,14 +169,25 @@ export default function NewArticleForm({
           payload
         );
       } else {
-        await createArticle(payload);
+        const article = await createArticle(payload);
+
+        toast.success("Draft saved.");
+
+        router.push("/admin/articles");
+        router.refresh();
       }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
+
+        toast.error(error.message);
       } else {
         console.error(
-          "Gagal menyimpan artikel."
+          "Failed to save draft."
+        );
+
+        toast.error(
+          "Failed to save draft."
         );
       }
     } finally {
@@ -148,6 +196,30 @@ export default function NewArticleForm({
   }
 
   async function handlePublish() {
+    if (saving) return;
+    if (!title.trim()) {
+      toast.error("Title is required.");
+      return;
+    }
+
+    if (!categoryId) {
+      toast.error("Please select a category.");
+      return;
+    }
+
+    if (!authorId) {
+      toast.error("Please select an author.");
+      return;
+    }
+
+    const plainText = content
+      .replace(/<[^>]*>/g, "")
+      .trim();
+
+    if (!plainText) {
+      toast.error("Article content is required.");
+      return;
+    }
     try {
       setSaving(true);
 
@@ -165,6 +237,13 @@ export default function NewArticleForm({
 
         cover_image_id: coverImageId || null,
 
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+
+        is_top_story: isTopStory,
+
         status: "published" as const,
 
         published_at: new Date().toISOString(),
@@ -179,14 +258,25 @@ export default function NewArticleForm({
           payload
         );
       } else {
-        await createArticle(payload);
+        const article = await createArticle(payload);
+
+        toast.success("Article published.");
+
+        router.push("/admin/articles");
+        router.refresh();
       }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
+
+        toast.error(error.message);
       } else {
         console.error(
-          "Gagal mempublikasikan artikel."
+          "Failed to publish article."
+        );
+
+        toast.error(
+          "Failed to publish article."
         );
       }
     } finally {
@@ -194,13 +284,119 @@ export default function NewArticleForm({
     }
   }
 
-  return (
-    <div className="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+  async function handleSchedule() {
+    if (saving) return;
+    if (!title.trim()) {
+      toast.error("Title is required.");
+      return;
+    }
 
-      <div>
+    if (!categoryId) {
+      toast.error("Please select a category.");
+      return;
+    }
+
+    if (!authorId) {
+      toast.error("Please select an author.");
+      return;
+    }
+
+    const plainText = content
+      .replace(/<[^>]*>/g, "")
+      .trim();
+
+    if (!plainText) {
+      toast.error("Article content is required.");
+      return;
+    }
+    try {
+      setSaving(true);
+
+      if (!publishDate || !publishTime) {
+        alert("Pilih tanggal dan jam publish terlebih dahulu.");
+        return;
+      }
+
+      const publishedAt = new Date(
+        `${publishDate}T${publishTime}:00`
+      ).toISOString();
+
+      const payload = {
+        title,
+        slug,
+
+        excerpt,
+        content,
+
+        category_id: categoryId || null,
+        subcategory_id: subcategoryId || null,
+
+        author_id: authorId || null,
+
+        cover_image_id: coverImageId || null,
+
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+
+        is_top_story: isTopStory,
+
+        status: "scheduled" as const,
+
+        published_at: publishedAt,
+      };
+
+      if (
+        mode === "edit" &&
+        initialData
+      ) {
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+      } else {
+        const article = await createArticle(payload);
+
+        toast.success("Article scheduled.");
+
+        router.push("/admin/articles");
+        router.refresh();
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+
+        toast.error(error.message);
+      } else {
+        console.error(
+          "Failed to schedule article."
+        );
+
+        toast.error(
+          "Failed to schedule article."
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  console.log("FORM STATE", {
+    categoryId,
+    subcategoryId,
+    authorId,
+    coverImageId,
+  });
+
+  return (
+    <div className="w-full space-y-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+
+      <div className="max-w-3xl">
+
         <label
           htmlFor="title"
-          className="mb-2 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500"
         >
           Title
         </label>
@@ -211,14 +407,36 @@ export default function NewArticleForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Article title..."
-          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 outline-none transition focus:border-black"
+          className="
+    h-9
+    w-full
+    rounded-md
+    border
+    border-gray-300
+    bg-white
+    px-3
+
+    text-sm
+    font-medium
+    text-gray-900
+
+    placeholder:text-gray-400
+
+    outline-none
+    transition-colors
+
+    focus:border-black
+    focus:ring-0
+  "
         />
+
       </div>
 
-      <div>
+      <div className="max-w-2xl">
+
         <label
           htmlFor="slug"
-          className="mb-2 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500"
         >
           Slug
         </label>
@@ -226,57 +444,132 @@ export default function NewArticleForm({
         <input
           id="slug"
           type="text"
-          value={slug}
           readOnly
-          className="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-3 text-base text-gray-700"
+          value={slug}
+          className="h-9 w-full rounded-md border border-gray-200 bg-gray-50 px-3 text-sm text-gray-600"
+        />
+
+      </div>
+
+      <div className="flex items-end gap-4">
+
+        <CategoryFields
+          categoryId={categoryId}
+          subcategoryId={subcategoryId}
+          onCategoryChange={setCategoryId}
+          onSubcategoryChange={setSubcategoryId}
+        />
+
+        <AuthorField
+          value={authorId}
+          onChange={setAuthorId}
+        />
+
+      </div>
+
+      <div className="max-w-xs pt-1">
+        <FeaturedImageField
+          value={coverImageId}
+          onChange={setCoverImageId}
         />
       </div>
 
-      <CategoryFields
-        categoryId={categoryId}
-        subcategoryId={subcategoryId}
-        onCategoryChange={setCategoryId}
-        onSubcategoryChange={setSubcategoryId}
-      />
+      <div className="max-w-3xl pt-1">
+        <ExcerptField
+          value={excerpt}
+          onChange={setExcerpt}
+        />
+      </div>
 
-      <AuthorField
-        value={authorId}
-        onChange={setAuthorId}
-      />
+      <div className="pt-1">
+        <ContentField
+          value={content}
+          onChange={setContent}
+        />
+      </div>
 
-      <FeaturedImageField
-        value={coverImageId}
-        onChange={setCoverImageId}
-      />
+      <div className="w-[840px] pt-2">
 
-      <ExcerptField
-        value={excerpt}
-        onChange={setExcerpt}
-      />
+        <TagsField
+          value={tags}
+          onChange={setTags}
+        />
 
-      <ContentField
-        value={content}
-        onChange={setContent}
-      />
+      </div>
 
-      <div className="flex justify-end gap-3">
+      <div className="flex h-9 w-[840px] items-center rounded-md border border-gray-200 px-4">
+
+        <label className="flex items-center gap-3">
+
+          <input
+            id="top-story"
+            type="checkbox"
+            checked={isTopStory}
+            onChange={(e) =>
+              setIsTopStory(e.target.checked)
+            }
+            className="h-4 w-4"
+          />
+
+          <span className="text-sm font-medium text-gray-800">
+            Set as Top Story
+          </span>
+
+        </label>
+
+      </div>
+
+      {showSchedule && (
+        <ScheduleField
+          date={publishDate}
+          time={publishTime}
+          onDateChange={setPublishDate}
+          onTimeChange={setPublishTime}
+        />
+      )}
+
+      <div className="flex w-[840px] justify-end gap-2 border-t border-gray-200 pt-4">
+
         <button
           type="button"
           onClick={handleSaveDraft}
           disabled={saving}
-          className="rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
+          className="rounded-lg border border-gray-300 bg-white px-6 h-9 font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
         >
-          Save Draft
+          {saving ? "Saving..." : "Save Draft"}
+        </button>
+
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() => {
+            if (!showSchedule) {
+              setShowSchedule(true);
+              return;
+            }
+
+            handleSchedule();
+          }}
+          className="rounded-lg border border-gray-300 bg-white px-6 h-9 font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
+        >
+          {saving
+            ? "Scheduling..."
+            : showSchedule
+              ? "Confirm Schedule"
+              : "Schedule"}
         </button>
 
         <button
           type="button"
           onClick={handlePublish}
           disabled={saving}
-          className="rounded-lg bg-black px-6 py-3 font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
+          className="h-9 rounded-md bg-black px-5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
         >
-          {saving ? "Publishing..." : "Publish"}
+          {saving
+            ? "Publishing..."
+            : "Publish"}
         </button>
+
       </div>
 
     </div>

@@ -4,11 +4,20 @@ export default function robots(): MetadataRoute.Robots {
   const baseUrl = "https://urbanstories.id";
 
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+      },
+
+      {
+        userAgent: "Googlebot",
+        allow: "/",
+      },
+    ],
+
     sitemap: `${baseUrl}/sitemap.xml`,
+
     host: baseUrl,
   };
 }

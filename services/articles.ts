@@ -12,11 +12,13 @@ export type CreateArticlePayload = {
 
   cover_image_id: string | null;
 
+  tags: string[];
+
   status:
-    | "draft"
-    | "scheduled"
-    | "published"
-    | "archived";
+  | "draft"
+  | "scheduled"
+  | "published"
+  | "archived";
 
   published_at: string | null;
 };

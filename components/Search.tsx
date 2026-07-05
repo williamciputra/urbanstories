@@ -1,9 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { articles } from "../data/articles";
+
+type SearchResult = {
+  id: string;
+  title: string;
+  slug: string;
+
+  authors: {
+    name: string;
+  } | null;
+
+  categories: {
+    name: string;
+  } | null;
+};
 
 interface SearchProps {
   compact?: boolean;
@@ -16,41 +30,68 @@ export default function Search({
 
   const [keyword, setKeyword] = useState("");
 
-  const results = useMemo(() => {
-    if (!keyword.trim()) return [];
+  const [results, setResults] =
+    useState<SearchResult[]>([]);
 
-    return articles.filter((article) =>
-      [
-        article.title,
-        article.excerpt,
-        article.category,
-        article.author,
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(keyword.toLowerCase())
-    );
+  useEffect(() => {
+    if (!keyword.trim()) {
+      setResults([]);
+      return;
+    }
+
+    const controller =
+      new AbortController();
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(
+            keyword
+          )}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
+        const data = await res.json();
+
+        setResults(data);
+      } catch {}
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
   }, [keyword]);
 
-  const handleSearch = () => {
+  function handleSearch() {
     const value = keyword.trim();
 
     if (!value) return;
 
-    router.push(`/search?q=${encodeURIComponent(value)}`);
+    router.push(
+      `/search?q=${encodeURIComponent(
+        value
+      )}`
+    );
+
     setKeyword("");
-  };
+  }
 
   return (
     <div
-      className={`relative transition-all duration-300 ${compact ? "w-64" : "w-80"
-        }`}
+      className={`relative transition-all duration-300 ${
+        compact ? "w-64" : "w-80"
+      }`}
     >
       <input
         type="text"
         placeholder="Cari artikel..."
         value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        onChange={(e) =>
+          setKeyword(e.target.value)
+        }
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSearch();
@@ -60,30 +101,43 @@ export default function Search({
             setKeyword("");
           }
         }}
-        className={`w-full rounded-full border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 outline-none transition-all duration-300 focus:border-black ${compact ? "h-10 px-4 text-sm" : "h-12 px-5 text-sm"
-          }`}
+        className={`w-full rounded-full border border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 outline-none transition-all duration-300 focus:border-black ${
+          compact
+            ? "h-10 px-4 text-sm"
+            : "h-12 px-5 text-sm"
+        }`}
       />
 
-      {keyword.trim() && results.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-3 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl">
-          {results.slice(0, 5).map((article) => (
-            <Link
-              key={article.id}
-              href={`/articles/${article.slug}`}
-              onClick={() => setKeyword("")}
-              className="block border-b border-neutral-100 px-5 py-4 hover:bg-neutral-50 last:border-b-0"
-            >
-              <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                {article.category}
-              </p>
+      {keyword.trim() &&
+        results.length > 0 && (
+          <div className="absolute left-0 right-0 top-full mt-3 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl">
 
-              <h3 className="mt-1 font-semibold text-neutral-900">
-                {article.title}
-              </h3>
-            </Link>
-          ))}
-        </div>
-      )}
+            {results.map((article) => (
+              <Link
+                key={article.id}
+                href={`/articles/${article.slug}`}
+                onClick={() =>
+                  setKeyword("")
+                }
+                className="block border-b border-neutral-100 px-5 py-4 hover:bg-neutral-50 last:border-b-0"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  {article.categories?.name}
+                </p>
+
+                <h3 className="mt-1 font-semibold text-neutral-900">
+                  {article.title}
+                </h3>
+
+                <p className="mt-1 text-sm text-neutral-500">
+                  Oleh{" "}
+                  {article.authors?.name}
+                </p>
+              </Link>
+            ))}
+
+          </div>
+        )}
     </div>
   );
 }

@@ -1,34 +1,43 @@
-import Link from "next/link";
 import Image from "next/image";
-import { articles } from "../data/articles";
+import Link from "next/link";
 
-type Article = (typeof articles)[number];
+import type { HomepageArticle } from "@/services/public/articles";
 
 interface ArticleCardProps {
-  article: Article;
+  article: HomepageArticle;
 }
 
 export default function ArticleCard({
   article,
 }: ArticleCardProps) {
+  const imageUrl = article.media?.path
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
+    : "";
+
   return (
     <Link
       href={`/articles/${article.slug}`}
       className="group block"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
-        <Image
-          src={article.image}
-          alt={article.title}
-          fill
-          unoptimized
-          sizes="400px"
-          className="object-cover transition duration-500 group-hover:scale-105"
-        />
+      <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-100">
+
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            alt={
+              article.media?.alt_text ??
+              article.title
+            }
+            fill
+            sizes="400px"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        )}
+
       </div>
 
       <p className="mt-6 text-xs uppercase tracking-[0.24em] text-neutral-500">
-        {article.category}
+        {article.categories?.name}
       </p>
 
       <h2 className="mt-3 text-2xl font-bold leading-snug text-neutral-900 transition group-hover:opacity-70">
@@ -40,7 +49,13 @@ export default function ArticleCard({
       </p>
 
       <p className="mt-5 text-sm text-neutral-500">
-        {article.date} • {article.readTime}
+        {new Date(
+          article.published_at
+        ).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
       </p>
     </Link>
   );

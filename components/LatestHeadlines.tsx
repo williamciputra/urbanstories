@@ -1,12 +1,10 @@
-import { articles } from "../data/articles";
+import { getLatestHeadlines } from "@/services/public/articles";
 import EditorsCard from "./EditorsCard";
 
-export default function LatestHeadlines() {
-  const headlines = articles
-    .filter((article) => !article.hero)
-    .slice(0, 4);
+export default async function LatestHeadlines() {
+  const headlines = await getLatestHeadlines();
 
-  if (headlines.length === 0) return null;
+  if (!headlines.length) return null;
 
   return (
     <section className="h-full">

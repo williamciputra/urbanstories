@@ -1,10 +1,13 @@
-import { articles } from "../data/articles";
+import { getLatestArticles } from "@/services/public/articles";
 import NewsFeed from "./NewsFeed";
 
-export default function LatestArticles() {
-  const latestArticles = articles.filter(
-    (article) => !article.hero && !article.editorPick
-  );
+export default async function LatestArticles() {
+  const latestArticles =
+    await getLatestArticles();
+
+  if (!latestArticles.length) {
+    return null;
+  }
 
   return (
     <section className="mt-28">
@@ -15,7 +18,9 @@ export default function LatestArticles() {
       <div className="mt-6 border-b border-black"></div>
 
       <div className="mt-12">
-        <NewsFeed articles={latestArticles} />
+        <NewsFeed
+          articles={latestArticles}
+        />
       </div>
     </section>
   );
