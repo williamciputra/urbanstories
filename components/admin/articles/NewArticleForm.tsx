@@ -15,6 +15,7 @@ import ExcerptField from "./ExcerptField";
 import ContentField from "./ContentField";
 import TagsField from "./TagsField";
 import ScheduleField from "./ScheduleField";
+import PublishDateField from "./PublishDateField";
 import { ArticleStatus } from "./StatusField";
 
 import FeaturedImageField from "@/components/admin/media-picker/FeaturedImageField";
@@ -89,10 +90,19 @@ export default function NewArticleForm({
   const [publishTime, setPublishTime] =
     useState("");
 
+  const [scheduleDate, setScheduleDate] =
+    useState("");
+
+  const [scheduleTime, setScheduleTime] =
+    useState("");
+
   const [saving, setSaving] =
     useState(false);
 
   const [showSchedule, setShowSchedule] =
+    useState(false);
+
+  const [showPublishDate, setShowPublishDate] =
     useState(false);
 
   useEffect(() => {
@@ -312,13 +322,15 @@ export default function NewArticleForm({
     try {
       setSaving(true);
 
-      if (!publishDate || !publishTime) {
-        alert("Pilih tanggal dan jam publish terlebih dahulu.");
+      if (!scheduleDate || !scheduleTime) {
+        toast.error(
+          "Please select publish date and time."
+        );
         return;
       }
 
       const publishedAt = new Date(
-        `${publishDate}T${publishTime}:00`
+        `${scheduleDate}T${scheduleTime}:00`
       ).toISOString();
 
       const payload = {
@@ -375,6 +387,99 @@ export default function NewArticleForm({
 
         toast.error(
           "Failed to schedule article."
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handlePublishWithDate() {
+    if (saving) return;
+
+    if (!title.trim()) {
+      toast.error("Title is required.");
+      return;
+    }
+
+    if (!categoryId) {
+      toast.error("Please select a category.");
+      return;
+    }
+
+    if (!authorId) {
+      toast.error("Please select an author.");
+      return;
+    }
+
+    const plainText = content
+      .replace(/<[^>]*>/g, "")
+      .trim();
+
+    if (!plainText) {
+      toast.error("Article content is required.");
+      return;
+    }
+
+    if (!publishDate || !publishTime) {
+      toast.error(
+        "Please select publish date and time."
+      );
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const publishedAt = new Date(
+        `${publishDate}T${publishTime}:00`
+      ).toISOString();
+
+      const payload = {
+        title,
+        slug,
+
+        excerpt,
+        content,
+
+        category_id: categoryId || null,
+        subcategory_id: subcategoryId || null,
+
+        author_id: authorId || null,
+
+        cover_image_id: coverImageId || null,
+
+        tags: tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+
+        is_top_story: isTopStory,
+
+        status: "published" as const,
+
+        published_at: publishedAt,
+      };
+
+      if (mode === "edit" && initialData) {
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+      } else {
+        await createArticle(payload);
+      }
+
+      toast.success("Article published.");
+
+      router.push("/admin/articles");
+      router.refresh();
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(
+          "Failed to publish article."
         );
       }
     } finally {
@@ -519,12 +624,21 @@ export default function NewArticleForm({
 
       </div>
 
-      {showSchedule && (
-        <ScheduleField
+      {showPublishDate && (
+        <PublishDateField
           date={publishDate}
           time={publishTime}
           onDateChange={setPublishDate}
           onTimeChange={setPublishTime}
+        />
+      )}
+
+      {showSchedule && (
+        <ScheduleField
+          date={scheduleDate}
+          time={scheduleTime}
+          onDateChange={setScheduleDate}
+          onTimeChange={setScheduleTime}
         />
       )}
 
@@ -544,7 +658,12 @@ export default function NewArticleForm({
           disabled={saving}
           onClick={() => {
             if (!showSchedule) {
+              setPublishDate("");
+              setPublishTime("");
+
+              setShowPublishDate(false);
               setShowSchedule(true);
+
               return;
             }
 
@@ -557,6 +676,31 @@ export default function NewArticleForm({
             : showSchedule
               ? "Confirm Schedule"
               : "Schedule"}
+        </button>
+
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() => {
+            if (!showPublishDate) {
+              setScheduleDate("");
+              setScheduleTime("");
+
+              setShowSchedule(false);
+              setShowPublishDate(true);
+
+              return;
+            }
+
+            handlePublishWithDate();
+          }}
+          className="rounded-lg border border-gray-300 bg-white px-6 h-9 font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
+        >
+          {saving
+            ? "Publishing..."
+            : showPublishDate
+              ? "Confirm Publish Date"
+              : "Publish Date"}
         </button>
 
         <button
