@@ -9,37 +9,39 @@ type UploadButtonProps = {
 export default function UploadButton({
   onUploaded,
 }: UploadButtonProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [uploading, setUploading] = useState(false);
+  const inputRef =
+    useRef<HTMLInputElement>(null);
+
+  const [uploading, setUploading] =
+    useState(false);
 
   async function upload(file: File) {
     setUploading(true);
 
     const formData = new FormData();
+
     formData.append("file", file);
 
-    console.log("[UPLOAD] START");
-
-    const res = await fetch("/api/media/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log("[UPLOAD] FETCH DONE");
+    const res = await fetch(
+      "/api/media/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     setUploading(false);
 
     if (!res.ok) {
-      console.log("[UPLOAD] FAILED");
-      alert("Upload gagal");
+      alert("Upload gagal.");
       return;
     }
 
-    const result = await res.json();
+    onUploaded?.();
 
-    console.log("[UPLOAD] JSON", result);
-
-    window.location.reload();
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   }
 
   return (
@@ -50,18 +52,26 @@ export default function UploadButton({
         type="file"
         accept="image/*"
         onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) upload(file);
+          const file =
+            e.target.files?.[0];
+
+          if (file) {
+            upload(file);
+          }
         }}
       />
 
       <button
         type="button"
-        onClick={() => inputRef.current?.click()}
+        onClick={() =>
+          inputRef.current?.click()
+        }
         disabled={uploading}
-        className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800"
+        className="rounded-lg bg-black px-4 py-2 text-white transition hover:bg-gray-800 disabled:opacity-50"
       >
-        {uploading ? "Uploading..." : "+ Upload Image"}
+        {uploading
+          ? "Uploading..."
+          : "+ Upload Image"}
       </button>
     </>
   );

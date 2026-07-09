@@ -25,17 +25,32 @@ export const navigation = [
     children: [
       { name: "Film", href: "/entertainment/film" },
       { name: "Musik", href: "/entertainment/musik" },
-      { name: "Hot Issue", href: "/entertainment/hot-issue" },
-      { name: "Pop Art", href: "/entertainment/pop-art" },
+      {
+        name: "Hot Issue",
+        href: "/entertainment/hot-issue",
+      },
+      {
+        name: "Pop Art",
+        href: "/entertainment/pop-art",
+      },
     ],
   },
   {
     name: "Technology",
     href: "/technology",
     children: [
-      { name: "Gadgets", href: "/technology/gadgets" },
-      { name: "Apps", href: "/technology/apps" },
-      { name: "AI", href: "/technology/ai" },
+      {
+        name: "Gadgets",
+        href: "/technology/gadgets",
+      },
+      {
+        name: "Apps",
+        href: "/technology/apps",
+      },
+      {
+        name: "AI",
+        href: "/technology/ai",
+      },
     ],
   },
   {
@@ -47,10 +62,22 @@ export const navigation = [
     name: "Explore",
     href: "/explore",
     children: [
-      { name: "Horoscope", href: "/explore/horoscope" },
-      { name: "Intimacy", href: "/explore/intimacy" },
-      { name: "Relationship", href: "/explore/relationship" },
-      { name: "Horror", href: "/explore/horror" },
+      {
+        name: "Horoscope",
+        href: "/explore/horoscope",
+      },
+      {
+        name: "Intimacy",
+        href: "/explore/intimacy",
+      },
+      {
+        name: "Leksikon",
+        href: "/explore/leksikon",
+      },
+      {
+        name: "Horror",
+        href: "/explore/horror",
+      },
     ],
   },
   {

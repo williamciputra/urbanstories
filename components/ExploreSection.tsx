@@ -1,5 +1,18 @@
 import CategorySection from "./CategorySection";
 
-export default function ExploreSection() {
-  return <CategorySection category="Explore" />;
+import type { HomepageArticle } from "@/services/public/articles";
+
+type ExploreSectionProps = {
+  articles: HomepageArticle[];
+};
+
+export default function ExploreSection({
+  articles,
+}: ExploreSectionProps) {
+  return (
+    <CategorySection
+      category="Explore"
+      articles={articles}
+    />
+  );
 }

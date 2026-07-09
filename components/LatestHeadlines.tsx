@@ -1,10 +1,15 @@
-import { getLatestHeadlines } from "@/services/public/articles";
 import EditorsCard from "./EditorsCard";
 
-export default async function LatestHeadlines() {
-  const headlines = await getLatestHeadlines();
+import type { HomepageArticle } from "@/services/public/articles";
 
-  if (!headlines.length) return null;
+type LatestHeadlinesProps = {
+  articles: HomepageArticle[];
+};
+
+export default function LatestHeadlines({
+  articles,
+}: LatestHeadlinesProps) {
+  if (!articles.length) return null;
 
   return (
     <section className="h-full">
@@ -15,7 +20,7 @@ export default async function LatestHeadlines() {
       <div className="mt-2 mb-2 border-b border-neutral-300"></div>
 
       <div className="space-y-1">
-        {headlines.map((article) => (
+        {articles.map((article) => (
           <EditorsCard
             key={article.id}
             article={article}

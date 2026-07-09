@@ -29,7 +29,7 @@ export const SUBCATEGORY_SLUGS = {
   explore: {
     horoscope: "Horoscope",
     intimacy: "Intimacy",
-    relationship: "Relationship",
+    leksikon: "Leksikon",
     horror: "Horror",
   },
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 type Article = {
   id: string;
   title: string;
+  slug: string;
 };
 
 type ArticlePickerModalProps = {

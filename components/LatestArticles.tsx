@@ -1,11 +1,20 @@
-import { getLatestArticles } from "@/services/public/articles";
-import NewsFeed from "./NewsFeed";
+import type { HomepageArticle } from "@/services/public/articles";
 
-export default async function LatestArticles() {
-  const latestArticles =
-    await getLatestArticles();
+import HomepageNewsFeed from "@/components/homepage/HomepageNewsFeed";
 
-  if (!latestArticles.length) {
+type LatestArticlesProps = {
+  articles: HomepageArticle[];
+
+  currentPage: number;
+  totalPages: number;
+};
+
+export default function LatestArticles({
+  articles,
+  currentPage,
+  totalPages,
+}: LatestArticlesProps) {
+  if (!articles.length) {
     return null;
   }
 
@@ -18,8 +27,10 @@ export default async function LatestArticles() {
       <div className="mt-6 border-b border-black"></div>
 
       <div className="mt-12">
-        <NewsFeed
-          articles={latestArticles}
+        <HomepageNewsFeed
+          articles={articles}
+          currentPage={currentPage}
+          totalPages={totalPages}
         />
       </div>
     </section>

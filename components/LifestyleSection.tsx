@@ -1,5 +1,18 @@
 import CategorySection from "./CategorySection";
 
-export default function LifestyleSection() {
-  return <CategorySection category="Lifestyle" />;
+import type { HomepageArticle } from "@/services/public/articles";
+
+type LifestyleSectionProps = {
+  articles: HomepageArticle[];
+};
+
+export default function LifestyleSection({
+  articles,
+}: LifestyleSectionProps) {
+  return (
+    <CategorySection
+      category="Lifestyle"
+      articles={articles}
+    />
+  );
 }

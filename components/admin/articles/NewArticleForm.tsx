@@ -141,8 +141,47 @@ export default function NewArticleForm({
 
   async function handleSaveDraft() {
     if (saving) return;
+
     try {
       setSaving(true);
+
+      if (mode === "edit" && initialData) {
+        const payload = {
+          title,
+          slug,
+
+          excerpt,
+          content,
+
+          category_id: categoryId || null,
+          subcategory_id: subcategoryId || null,
+
+          author_id: authorId || null,
+
+          cover_image_id: coverImageId || null,
+
+          tags: tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+
+          is_top_story: isTopStory,
+
+          status: "draft" as const,
+        };
+
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+
+        toast.success("Draft updated.");
+
+        router.push("/admin/articles");
+        router.refresh();
+
+        return;
+      }
 
       const payload = {
         title,
@@ -170,26 +209,15 @@ export default function NewArticleForm({
         published_at: null,
       };
 
-      if (
-        mode === "edit" &&
-        initialData
-      ) {
-        await updateArticle(
-          initialData.id,
-          payload
-        );
-      } else {
-        const article = await createArticle(payload);
+      await createArticle(payload);
 
-        toast.success("Draft saved.");
+      toast.success("Draft saved.");
 
-        router.push("/admin/articles");
-        router.refresh();
-      }
+      router.push("/admin/articles");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-
         toast.error(error.message);
       } else {
         console.error(
@@ -207,6 +235,7 @@ export default function NewArticleForm({
 
   async function handlePublish() {
     if (saving) return;
+
     if (!title.trim()) {
       toast.error("Title is required.");
       return;
@@ -230,8 +259,47 @@ export default function NewArticleForm({
       toast.error("Article content is required.");
       return;
     }
+
     try {
       setSaving(true);
+
+      if (mode === "edit" && initialData) {
+        const payload = {
+          title,
+          slug,
+
+          excerpt,
+          content,
+
+          category_id: categoryId || null,
+          subcategory_id: subcategoryId || null,
+
+          author_id: authorId || null,
+
+          cover_image_id: coverImageId || null,
+
+          tags: tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+
+          is_top_story: isTopStory,
+
+          status: "published" as const,
+        };
+
+        await updateArticle(
+          initialData.id,
+          payload
+        );
+
+        toast.success("Article updated.");
+
+        router.push("/admin/articles");
+        router.refresh();
+
+        return;
+      }
 
       const payload = {
         title,
@@ -259,26 +327,15 @@ export default function NewArticleForm({
         published_at: new Date().toISOString(),
       };
 
-      if (
-        mode === "edit" &&
-        initialData
-      ) {
-        await updateArticle(
-          initialData.id,
-          payload
-        );
-      } else {
-        const article = await createArticle(payload);
+      await createArticle(payload);
 
-        toast.success("Article published.");
+      toast.success("Article published.");
 
-        router.push("/admin/articles");
-        router.refresh();
-      }
+      router.push("/admin/articles");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-
         toast.error(error.message);
       } else {
         console.error(
@@ -296,6 +353,7 @@ export default function NewArticleForm({
 
   async function handleSchedule() {
     if (saving) return;
+
     if (!title.trim()) {
       toast.error("Title is required.");
       return;
@@ -319,19 +377,63 @@ export default function NewArticleForm({
       toast.error("Article content is required.");
       return;
     }
+
+    if (!scheduleDate || !scheduleTime) {
+      toast.error(
+        "Please select publish date and time."
+      );
+      return;
+    }
+
     try {
       setSaving(true);
-
-      if (!scheduleDate || !scheduleTime) {
-        toast.error(
-          "Please select publish date and time."
-        );
-        return;
-      }
 
       const publishedAt = new Date(
         `${scheduleDate}T${scheduleTime}:00`
       ).toISOString();
+
+      if (mode === "edit" && initialData) {
+        const payload = {
+          title,
+          slug,
+
+          excerpt,
+          content,
+
+          category_id: categoryId || null,
+          subcategory_id: subcategoryId || null,
+
+          author_id: authorId || null,
+
+          cover_image_id: coverImageId || null,
+
+          tags: tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+
+          is_top_story: isTopStory,
+
+          status: "scheduled" as const,
+
+          published_at: publishedAt,
+        };
+
+        await fetch(`/api/articles/${initialData.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        toast.success("Article scheduled.");
+
+        router.push("/admin/articles");
+        router.refresh();
+
+        return;
+      }
 
       const payload = {
         title,
@@ -359,32 +461,16 @@ export default function NewArticleForm({
         published_at: publishedAt,
       };
 
-      if (
-        mode === "edit" &&
-        initialData
-      ) {
-        await updateArticle(
-          initialData.id,
-          payload
-        );
-      } else {
-        const article = await createArticle(payload);
+      await createArticle(payload);
 
-        toast.success("Article scheduled.");
+      toast.success("Article scheduled.");
 
-        router.push("/admin/articles");
-        router.refresh();
-      }
+      router.push("/admin/articles");
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
-        console.error(error.message);
-
         toast.error(error.message);
       } else {
-        console.error(
-          "Failed to schedule article."
-        );
-
         toast.error(
           "Failed to schedule article."
         );
@@ -435,6 +521,49 @@ export default function NewArticleForm({
         `${publishDate}T${publishTime}:00`
       ).toISOString();
 
+      if (mode === "edit" && initialData) {
+        const payload = {
+          title,
+          slug,
+
+          excerpt,
+          content,
+
+          category_id: categoryId || null,
+          subcategory_id: subcategoryId || null,
+
+          author_id: authorId || null,
+
+          cover_image_id: coverImageId || null,
+
+          tags: tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+
+          is_top_story: isTopStory,
+
+          status: "published" as const,
+
+          published_at: publishedAt,
+        };
+
+        await fetch(`/api/articles/${initialData.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        toast.success("Publish date updated.");
+
+        router.push("/admin/articles");
+        router.refresh();
+
+        return;
+      }
+
       const payload = {
         title,
         slug,
@@ -461,14 +590,7 @@ export default function NewArticleForm({
         published_at: publishedAt,
       };
 
-      if (mode === "edit" && initialData) {
-        await updateArticle(
-          initialData.id,
-          payload
-        );
-      } else {
-        await createArticle(payload);
-      }
+      await createArticle(payload);
 
       toast.success("Article published.");
 
@@ -710,8 +832,12 @@ export default function NewArticleForm({
           className="h-9 rounded-md bg-black px-5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
         >
           {saving
-            ? "Publishing..."
-            : "Publish"}
+            ? mode === "edit"
+              ? "Saving..."
+              : "Publishing..."
+            : mode === "edit"
+              ? "Save"
+              : "Publish"}
         </button>
 
       </div>

@@ -1,17 +1,27 @@
 import TopStory from "./TopStory";
 import LatestHeadlines from "./LatestHeadlines";
 
-export default function FeaturedNewsSection() {
+import type { HomepageArticle } from "@/services/public/articles";
+
+type FeaturedNewsSectionProps = {
+  topStory: HomepageArticle | null;
+  latestHeadlines: HomepageArticle[];
+};
+
+export default function FeaturedNewsSection({
+  topStory,
+  latestHeadlines,
+}: FeaturedNewsSectionProps) {
   return (
-    <section className="mt-16">
-      <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr] items-start">
+    <section className="mt-8">
+      <div className="grid items-start gap-6 lg:grid-cols-[1.55fr_1fr]">
 
         <div className="h-full">
-          <TopStory />
+          <TopStory article={topStory} />
         </div>
 
         <div className="h-full">
-          <LatestHeadlines />
+          <LatestHeadlines articles={latestHeadlines} />
         </div>
 
       </div>

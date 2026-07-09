@@ -1,24 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { getArticlesByCategory } from "@/services/public/articles";
+import type { HomepageArticle } from "@/services/public/articles";
 
 interface FeaturedCategoryProps {
   category: string;
+  articles: HomepageArticle[];
 }
 
-export default async function CategorySection({
+export default function CategorySection({
   category,
+  articles,
 }: FeaturedCategoryProps) {
-  const categoryArticles =
-    await getArticlesByCategory(category);
-
-  if (categoryArticles.length === 0) {
+  if (articles.length === 0) {
     return null;
   }
 
-  const featured = categoryArticles[0];
-  const secondary = categoryArticles.slice(1, 3);
+  const featured = articles[0];
+  const secondary = articles.slice(1, 3);
 
   const featuredImage =
     featured.media?.path
@@ -91,7 +90,7 @@ export default async function CategorySection({
 
         <div className="flex flex-col divide-y divide-neutral-200">
 
-                    {secondary.map((article) => {
+          {secondary.map((article) => {
             const imageUrl =
               article.media?.path
                 ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`

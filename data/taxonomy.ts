@@ -31,9 +31,10 @@ export const taxonomy = {
   Explore: [
     "Horoscope",
     "Intimacy",
-    "Relationship",
+    "Leksikon",
     "Horror",
   ],
 } as const;
 
-export type Category = keyof typeof taxonomy;
+export type Category =
+  keyof typeof taxonomy;

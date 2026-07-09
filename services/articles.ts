@@ -23,6 +23,31 @@ export type CreateArticlePayload = {
   published_at: string | null;
 };
 
+export type UpdateArticlePayload = {
+  title: string;
+  slug: string;
+
+  excerpt: string;
+  content: string;
+
+  category_id: string | null;
+  subcategory_id: string | null;
+
+  author_id: string | null;
+
+  cover_image_id: string | null;
+
+  tags: string[];
+
+  status:
+  | "draft"
+  | "scheduled"
+  | "published"
+  | "archived";
+
+  is_top_story: boolean;
+};
+
 export async function createArticle(
   payload: CreateArticlePayload
 ) {
@@ -46,7 +71,7 @@ export async function createArticle(
 
 export async function updateArticle(
   id: string,
-  payload: CreateArticlePayload
+  payload: UpdateArticlePayload
 ) {
   const res = await fetch(
     `/api/articles/${id}`,

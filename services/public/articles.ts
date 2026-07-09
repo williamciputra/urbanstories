@@ -87,18 +87,56 @@ export async function getTopStory(): Promise<HomepageArticle | null> {
   return data as unknown as HomepageArticle | null;
 }
 
-export async function getLatestHeadlines(): Promise<HomepageArticle[]> {
+export async function getHomepageSource(): Promise<
+  HomepageArticle[]
+> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("articles")
     .select(ARTICLE_SELECT)
     .eq("status", "published")
+    .order("published_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []) as unknown as HomepageArticle[];
+}
+
+export async function getLatestHeadlines(): Promise<HomepageArticle[]> {
+  const supabase = await createClient();
+
+  // Ambil ID kategori Lifestyle & Explore
+  const { data: excludedCategories } = await supabase
+    .from("categories")
+    .select("id")
+    .in("name", ["Lifestyle", "Explore"]);
+
+  const excludedIds =
+    excludedCategories?.map((c) => c.id) ?? [];
+
+  let query = supabase
+    .from("articles")
+    .select(ARTICLE_SELECT)
+    .eq("status", "published")
     .eq("is_top_story", false)
     .order("published_at", {
       ascending: false,
-    })
-    .limit(4);
+    });
+
+  if (excludedIds.length) {
+    query = query.not(
+      "category_id",
+      "in",
+      `(${excludedIds.join(",")})`
+    );
+  }
+
+  const { data, error } = await query.limit(4);
 
   if (error) throw error;
 
@@ -108,19 +146,37 @@ export async function getLatestHeadlines(): Promise<HomepageArticle[]> {
 export async function getLatestArticles(): Promise<HomepageArticle[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // kategori yang tampil di section sendiri
+  const { data: excludedCategories } = await supabase
+    .from("categories")
+    .select("id")
+    .in("name", ["Lifestyle", "Explore"]);
+
+  const excludedIds =
+    excludedCategories?.map((c) => c.id) ?? [];
+
+  let query = supabase
     .from("articles")
     .select(ARTICLE_SELECT)
     .eq("status", "published")
     .eq("is_top_story", false)
     .order("published_at", {
       ascending: false,
-    })
-    .range(4, 18);
+    });
+
+  if (excludedIds.length) {
+    query = query.not(
+      "category_id",
+      "in",
+      `(${excludedIds.join(",")})`
+    );
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
 
-  return (data ?? []) as unknown as HomepageArticle[];
+  return ((data ?? []).slice(4, 19)) as unknown as HomepageArticle[];
 }
 
 export async function getArticleBySlug(
