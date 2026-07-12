@@ -1,3 +1,11 @@
+import {
+    CATEGORY_SLUGS,
+} from "@/lib/taxonomy/categories";
+
+import {
+    SUBCATEGORY_SLUGS,
+} from "@/lib/taxonomy/subcategories";
+
 import type {
     HomepageArticle,
 } from "@/services/public/articles";
@@ -17,11 +25,44 @@ export function mapWpPostToHomepageArticle(
             term.taxonomy === "category"
     );
 
-    const category =
-        categories[0] ?? null;
+    const categoryNames = Object.values(
+        CATEGORY_SLUGS
+    );
 
-    const subcategory =
-        categories[1] ?? null;
+    const category =
+        categories.find((term) =>
+            categoryNames.includes(
+                term.name as (typeof categoryNames)[number]
+            )
+        ) ?? null;
+
+    let subcategory = null;
+
+    if (category) {
+        const categorySlug = Object.entries(
+            CATEGORY_SLUGS
+        ).find(
+            ([, name]) =>
+                name === category.name
+        )?.[0];
+
+        if (categorySlug) {
+            const allowedSubs =
+                Object.values(
+                    SUBCATEGORY_SLUGS[
+                        categorySlug as keyof typeof SUBCATEGORY_SLUGS
+                    ]
+                );
+
+            subcategory =
+                categories.find(
+                    (term) =>
+                        allowedSubs.includes(
+                            term.name as never
+                        )
+                ) ?? null;
+        }
+    }
 
     const author =
         post._embedded?.author?.[0] ?? null;
@@ -46,34 +87,35 @@ export function mapWpPostToHomepageArticle(
 
         authors: author
             ? {
-                id: "",
-                name: author.name,
-            }
+                  id: "",
+                  name: author.name,
+              }
             : null,
 
         categories: category
             ? {
-                id: String(category.id),
-                name: category.name,
-            }
+                  id: String(category.id),
+                  name: category.name,
+              }
             : null,
 
         subcategories: subcategory
             ? {
-                id: String(subcategory.id),
-                name: subcategory.name,
-                slug: subcategory.slug,
-            }
+                  id: String(subcategory.id),
+                  name: subcategory.name,
+                  slug: subcategory.slug,
+              }
             : null,
 
         media: post.featured_image_url
             ? {
-                id: "",
-                path: post.featured_image_url,
-                alt_text:
-                    post.featured_image_alt ?? null,
-                title: null,
-            }
+                  id: "",
+                  path: post.featured_image_url,
+                  alt_text:
+                      post.featured_image_alt ??
+                      null,
+                  title: null,
+              }
             : null,
     };
 }

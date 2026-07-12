@@ -40,20 +40,14 @@ export async function getHomepageFeed(
         usedIds.add(topStory.id);
     }
 
-    const headlineCategories = [
-        "News",
-        "Entertainment",
-        "Technology",
-        "Sports",
-    ];
-
     const latestHeadlines = articles
         .filter(
             (article) =>
                 !usedIds.has(article.id) &&
-                headlineCategories.includes(
-                    article.categories?.name ?? ""
-                )
+                article.categories?.name !==
+                    "Lifestyle" &&
+                article.categories?.name !==
+                    "Explore"
         )
         .slice(0, 4);
 
@@ -66,7 +60,7 @@ export async function getHomepageFeed(
             (article) =>
                 !usedIds.has(article.id) &&
                 article.categories?.name ===
-                "Lifestyle"
+                    "Lifestyle"
         )
         .slice(0, 3);
 
@@ -79,7 +73,7 @@ export async function getHomepageFeed(
             (article) =>
                 !usedIds.has(article.id) &&
                 article.categories?.name ===
-                "Explore"
+                    "Explore"
         )
         .slice(0, 3);
 
@@ -97,7 +91,7 @@ export async function getHomepageFeed(
         1,
         Math.ceil(
             remainingArticles.length /
-            LATEST_PER_PAGE
+                LATEST_PER_PAGE
         )
     );
 
