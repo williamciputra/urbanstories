@@ -7,9 +7,8 @@ interface Props {
 export default function ArticleSchema({
   article,
 }: Props) {
-  const image = article.media?.path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-    : undefined;
+  const image =
+    article.media?.path;
 
   const schema = {
     "@context": "https://schema.org",

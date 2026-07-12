@@ -20,9 +20,7 @@ export default function CategorySection({
   const secondary = articles.slice(1, 3);
 
   const featuredImage =
-    featured.media?.path
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${featured.media.path}`
-      : "";
+    featured.media?.path ?? "";
 
   return (
     <section className="mt-28">
@@ -47,7 +45,7 @@ export default function CategorySection({
       <div className="grid gap-8 lg:grid-cols-[1.55fr_1fr]">
 
         <Link
-          href={`/articles/${featured.slug}`}
+          href={`/${featured.subcategories?.slug}/${featured.slug}`}
           className="group"
         >
 
@@ -92,14 +90,12 @@ export default function CategorySection({
 
           {secondary.map((article) => {
             const imageUrl =
-              article.media?.path
-                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-                : "";
+              article.media?.path ?? "";
 
             return (
               <Link
                 key={article.id}
-                href={`/articles/${article.slug}`}
+                href={`/${article.subcategories?.slug}/${article.slug}`}
                 className="group flex gap-4 py-4 first:pt-0 last:pb-0"
               >
 

@@ -5,8 +5,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 
-import { createClient } from "@/lib/supabase/server";
-import type { HomepageArticle } from "@/services/public/articles";
+import {
+  getHomepageSource,
+  type HomepageArticle,
+} from "@/services/public/articles";
 
 export const metadata: Metadata = {
   title: "Pencarian | Urbanstories",
@@ -25,58 +27,30 @@ export default async function SearchPage({
 }: SearchPageProps) {
   const { q = "" } = await searchParams;
 
-  const keyword = q.trim();
+  const keyword = q.trim().toLowerCase();
 
   let results: HomepageArticle[] = [];
 
   if (keyword) {
-    const supabase = await createClient();
+    const articles =
+      await getHomepageSource();
 
-    const { data } = await supabase
-      .from("articles")
-      .select(`
-        id,
-        title,
-        slug,
-        excerpt,
-        content,
-        status,
-        published_at,
-        is_top_story,
+    results = articles.filter((article) => {
+      const title =
+        article.title.toLowerCase();
 
-        authors:author_id (
-          id,
-          name
-        ),
+      const excerpt =
+        article.excerpt.toLowerCase();
 
-        categories:category_id (
-          id,
-          name
-        ),
+      const content =
+        article.content.toLowerCase();
 
-        subcategories:subcategory_id (
-          id,
-          name
-        ),
-
-        media:cover_image_id (
-          id,
-          path,
-          alt_text,
-          title
-        )
-      `)
-      .eq("status", "published")
-      .or(
-        `title.ilike.%${keyword}%,excerpt.ilike.%${keyword}%,content.ilike.%${keyword}%`
-      )
-      .order("published_at", {
-        ascending: false,
-      });
-
-    results =
-      (data as unknown as HomepageArticle[]) ??
-      [];
+      return (
+        title.includes(keyword) ||
+        excerpt.includes(keyword) ||
+        content.includes(keyword)
+      );
+    });
   }
 
   return (
@@ -98,18 +72,16 @@ export default async function SearchPage({
           </h1>
 
           <p className="mt-5 text-lg text-neutral-600">
-
             {keyword ? (
               <>
                 Menampilkan hasil untuk{" "}
                 <span className="font-semibold text-neutral-900">
-                  {keyword}
+                  {q}
                 </span>
               </>
             ) : (
               "Masukkan kata kunci untuk mencari artikel."
             )}
-
           </p>
 
           <div className="mt-12 border-b border-neutral-200" />
@@ -121,14 +93,12 @@ export default async function SearchPage({
               </p>
 
               <section className="mt-12 grid gap-14 md:grid-cols-2 lg:grid-cols-3">
-
                 {results.map((article) => (
                   <ArticleCard
                     key={article.id}
                     article={article}
                   />
                 ))}
-
               </section>
             </>
           )}
@@ -136,7 +106,6 @@ export default async function SearchPage({
           {keyword &&
             results.length === 0 && (
               <div className="py-24 text-center">
-
                 <h2 className="text-3xl font-bold text-neutral-900">
                   Tidak ada artikel ditemukan
                 </h2>
@@ -144,13 +113,11 @@ export default async function SearchPage({
                 <p className="mt-4 text-neutral-600">
                   Coba gunakan kata kunci lain.
                 </p>
-
               </div>
             )}
 
           {!keyword && (
             <div className="py-24 text-center">
-
               <h2 className="text-3xl font-bold text-neutral-900">
                 Mulai Pencarian
               </h2>
@@ -159,7 +126,6 @@ export default async function SearchPage({
                 Gunakan kolom pencarian di bagian atas
                 untuk menemukan artikel.
               </p>
-
             </div>
           )}
 

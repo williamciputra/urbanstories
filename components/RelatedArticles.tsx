@@ -35,14 +35,12 @@ export default async function RelatedArticles({
 
         {relatedArticles.map((article) => {
           const imageUrl =
-            article.media?.path
-              ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-              : "";
+            article.media?.path ?? "";
 
           return (
             <Link
               key={article.id}
-              href={`/articles/${article.slug}`}
+              href={`/${article.subcategories?.slug}/${article.slug}`}
               className="group"
             >
               <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-100">

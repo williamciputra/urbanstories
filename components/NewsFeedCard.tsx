@@ -8,13 +8,12 @@ export default function NewsFeedCard({
 }: {
   article: HomepageArticle;
 }) {
-  const imageUrl = article.media?.path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-    : "";
+  const imageUrl =
+    article.media?.path ?? "";
 
   return (
     <Link
-      href={`/articles/${article.slug}`}
+      href={`/${article.subcategories?.slug}/${article.slug}`}
       className="group block"
     >
       <article className="grid grid-cols-[120px_1fr] items-center gap-5 border-b border-neutral-200 p-5 last:border-b-0">

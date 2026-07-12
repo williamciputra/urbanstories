@@ -10,13 +10,12 @@ interface ArticleCardProps {
 export default function ArticleCard({
   article,
 }: ArticleCardProps) {
-  const imageUrl = article.media?.path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-    : "";
+  const imageUrl =
+    article.media?.path ?? "";
 
   return (
     <Link
-      href={`/articles/${article.slug}`}
+      href={`/${article.subcategories?.slug}/${article.slug}`}
       className="group block"
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-neutral-100">
@@ -44,9 +43,12 @@ export default function ArticleCard({
         {article.title}
       </h2>
 
-      <p className="mt-4 line-clamp-2 leading-7 text-neutral-600">
-        {article.excerpt}
-      </p>
+      <p
+        className="mt-4 line-clamp-2 leading-7 text-neutral-600"
+        dangerouslySetInnerHTML={{
+          __html: article.excerpt,
+        }}
+      />
 
       <p className="mt-5 text-sm text-neutral-500">
         {new Date(

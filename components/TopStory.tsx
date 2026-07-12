@@ -12,9 +12,8 @@ export default function TopStory({
 }: TopStoryProps) {
   if (!article) return null;
 
-  const imageUrl = article.media?.path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-    : "";
+  const imageUrl =
+    article.media?.path ?? "";
 
   return (
     <section>
@@ -23,7 +22,7 @@ export default function TopStory({
       </h2>
 
       <Link
-        href={`/articles/${article.slug}`}
+        href={`/${article.subcategories?.slug}/${article.slug}`}
         className="group block"
       >
         <div className="relative aspect-[24/10] overflow-hidden rounded-sm bg-neutral-100">

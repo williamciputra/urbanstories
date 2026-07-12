@@ -10,14 +10,13 @@ interface Props {
 export default function EditorsCard({
   article,
 }: Props) {
-  const imageUrl = article.media?.path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${article.media.path}`
-    : "";
+  const imageUrl =
+    article.media?.path ?? "";
 
   return (
     <article className="border-b border-neutral-200 py-2 last:border-b-0 last:pb-0">
       <Link
-        href={`/articles/${article.slug}`}
+        href={`/${article.subcategories?.slug}/${article.slug}`}
         className="group grid grid-cols-[84px_1fr] items-center gap-3"
       >
         <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
