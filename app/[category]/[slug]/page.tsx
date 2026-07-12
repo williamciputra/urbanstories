@@ -16,7 +16,7 @@ import Footer from "../../../components/Footer";
 
 interface Props {
     params: Promise<{
-        subcategory: string;
+        category: string;
         slug: string;
     }>;
 }
@@ -26,17 +26,13 @@ export async function generateMetadata({
 }: Props): Promise<Metadata> {
     const {
         slug,
-        subcategory,
+        category,
     } = await params;
 
     const article =
         await getArticleBySlug(slug);
 
-    if (
-        !article ||
-        article.subcategories?.slug !==
-        subcategory
-    ) {
+    if (!article) {
         notFound();
     }
 
@@ -107,7 +103,7 @@ export async function generateMetadata({
 export default async function ArticlePage({ params }: Props) {
     const {
         slug,
-        subcategory,
+        category,
     } = await params;
 
     const article =
@@ -159,7 +155,7 @@ export default async function ArticlePage({ params }: Props) {
                             <span>/</span>
 
                             <Link
-                                href={`/${article.subcategories?.slug}`}
+                                href={`/category/${article.categories?.name.toLowerCase()}/${article.subcategories?.slug}`}
                                 className="transition hover:text-black"
                             >
                                 {article.categories?.name}
@@ -170,7 +166,7 @@ export default async function ArticlePage({ params }: Props) {
                                     <span>/</span>
 
                                     <Link
-                                        href={`/${article.categories?.name.toLowerCase()}/${article.subcategories.name.toLowerCase()}`}
+                                        href={`/category/${article.categories?.name.toLowerCase()}/${article.subcategories?.slug}`}
                                         className="transition hover:text-black"
                                     >
                                         {article.subcategories.name}

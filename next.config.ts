@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
+
     remotePatterns: [
       {
         protocol: "https",
@@ -9,7 +11,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "aptbxopezxbfbtjqimwt.supabase.co",
+        hostname: "pawon.urbanstories.id",
       },
     ],
   },
