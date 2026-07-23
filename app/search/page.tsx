@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/v2/layout/Header";
+import Footer from "@/components/v2/layout/Footer";
 import ArticleCard from "@/components/ArticleCard";
 
 import {
@@ -32,18 +32,12 @@ export default async function SearchPage({
   let results: HomepageArticle[] = [];
 
   if (keyword) {
-    const articles =
-      await getHomepageSource();
+    const articles = await getHomepageSource();
 
     results = articles.filter((article) => {
-      const title =
-        article.title.toLowerCase();
-
-      const excerpt =
-        article.excerpt.toLowerCase();
-
-      const content =
-        article.content.toLowerCase();
+      const title = article.title.toLowerCase();
+      const excerpt = article.excerpt.toLowerCase();
+      const content = article.content.toLowerCase();
 
       return (
         title.includes(keyword) ||
@@ -57,17 +51,24 @@ export default async function SearchPage({
     <>
       <Header />
 
-      <main className="min-h-screen bg-[#FAF8F3]">
-        <div className="mx-auto max-w-7xl px-6 py-20">
+      <main className="bg-[#FAF8F3]">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <nav className="flex items-center gap-2 text-sm text-neutral-500">
+            <Link
+              href="/"
+              className="transition hover:text-neutral-900"
+            >
+              Home
+            </Link>
 
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm text-neutral-500 transition hover:text-black"
-          >
-            ← Kembali ke Beranda
-          </Link>
+            <span>/</span>
 
-          <h1 className="mt-8 text-5xl font-bold tracking-tight text-neutral-900 md:text-6xl">
+            <span className="font-medium text-neutral-900">
+              Pencarian
+            </span>
+          </nav>
+
+          <h1 className="mt-8 text-4xl font-bold tracking-tight text-neutral-900 md:text-5xl">
             Hasil Pencarian
           </h1>
 
@@ -84,7 +85,7 @@ export default async function SearchPage({
             )}
           </p>
 
-          <div className="mt-12 border-b border-neutral-200" />
+          <div className="mt-10 border-b border-neutral-200" />
 
           {keyword && results.length > 0 && (
             <>
@@ -92,7 +93,7 @@ export default async function SearchPage({
                 {results.length} artikel ditemukan
               </p>
 
-              <section className="mt-12 grid gap-14 md:grid-cols-2 lg:grid-cols-3">
+              <section className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
                 {results.map((article) => (
                   <ArticleCard
                     key={article.id}
@@ -103,18 +104,17 @@ export default async function SearchPage({
             </>
           )}
 
-          {keyword &&
-            results.length === 0 && (
-              <div className="py-24 text-center">
-                <h2 className="text-3xl font-bold text-neutral-900">
-                  Tidak ada artikel ditemukan
-                </h2>
+          {keyword && results.length === 0 && (
+            <div className="py-24 text-center">
+              <h2 className="text-3xl font-bold text-neutral-900">
+                Tidak ada artikel ditemukan
+              </h2>
 
-                <p className="mt-4 text-neutral-600">
-                  Coba gunakan kata kunci lain.
-                </p>
-              </div>
-            )}
+              <p className="mt-4 text-neutral-600">
+                Coba gunakan kata kunci lain.
+              </p>
+            </div>
+          )}
 
           {!keyword && (
             <div className="py-24 text-center">
@@ -123,12 +123,11 @@ export default async function SearchPage({
               </h2>
 
               <p className="mt-4 text-neutral-600">
-                Gunakan kolom pencarian di bagian atas
-                untuk menemukan artikel.
+                Gunakan kolom pencarian di bagian atas untuk menemukan
+                artikel.
               </p>
             </div>
           )}
-
         </div>
       </main>
 

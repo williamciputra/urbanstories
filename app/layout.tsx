@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
+
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
+
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -16,8 +19,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://urbanstories.id";
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://urbanstories.id"),
+  metadataBase: new URL(siteUrl),
+
   applicationName: "Urbanstories",
 
   title: {
@@ -26,28 +33,19 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Urbanstories menghadirkan cerita, ide, bisnis, teknologi, kesehatan, dan gaya hidup yang menginspirasi kehidupan urban.",
-
-  keywords: [
-    "Urbanstories",
-    "Media Digital",
-    "Berita",
-    "Lifestyle",
-    "Health",
-    "Technology",
-    "Business",
-    "Indonesia",
-  ],
+    "Urbanstories menghadirkan cerita, wawasan, dan inspirasi seputar gaya hidup, kesehatan, bisnis, teknologi, hingga berbagai isu yang relevan dengan kehidupan masyarakat urban.",
 
   authors: [
     {
-      name: "William Ciputra",
+      name: "Urbanstories",
     },
   ],
 
-  creator: "William Ciputra",
+  creator: "Urbanstories",
 
   publisher: "Urbanstories",
+
+  category: "news",
 
   alternates: {
     canonical: "/",
@@ -56,11 +54,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://urbanstories.id",
+    url: siteUrl,
     siteName: "Urbanstories",
     title: "Urbanstories | Cerita yang Menginspirasi",
     description:
-      "Urbanstories menghadirkan cerita, ide, bisnis, teknologi, kesehatan, dan gaya hidup yang menginspirasi kehidupan urban.",
+      "Urbanstories menghadirkan cerita, wawasan, dan inspirasi seputar gaya hidup, kesehatan, bisnis, teknologi, hingga berbagai isu yang relevan dengan kehidupan masyarakat urban.",
     images: [
       {
         url: "/opengraph-image.png",
@@ -75,20 +73,19 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Urbanstories | Cerita yang Menginspirasi",
     description:
-      "Cerita yang Menginspirasi tentang bisnis, teknologi, kesehatan, dan gaya hidup.",
-    images: ["/twitter-image.png"],
+      "Urbanstories menghadirkan cerita, wawasan, dan inspirasi seputar gaya hidup, kesehatan, bisnis, teknologi, hingga berbagai isu yang relevan dengan kehidupan masyarakat urban.",
+    images: ["/opengraph-image.png"],
   },
 
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
       "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
     },
   },
 
@@ -102,8 +99,22 @@ export const metadata: Metadata = {
 
   manifest: "/manifest.webmanifest",
 
+  themeColor: "#F7F4EE",
+
+  colorScheme: "light",
+
+  appleWebApp: {
+    capable: true,
+    title: "Urbanstories",
+    statusBarStyle: "default",
+  },
+
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
     apple: "/apple-icon.png",
   },
 };
@@ -118,25 +129,27 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="flex min-h-full flex-col">
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
 
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
-        >
-          {`
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
-  `}
-        </Script>
+            <Script
+              id="google-analytics"
+              strategy="afterInteractive"
+            >
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
 
         <OrganizationSchema />
 
@@ -149,7 +162,6 @@ export default function RootLayout({
         />
 
         {children}
-
       </body>
     </html>
   );

@@ -1,15 +1,18 @@
 import { getRssArticles } from "@/services/public/articles";
 
-export async function GET() {
-  const articles = await getRssArticles();
+const SITE_URL = "https://urbanstories.id";
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+export async function GET() {
+    const articles =
+        await getRssArticles();
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
 
 <title>Urbanstories</title>
 
-<link>https://urbanstories.id</link>
+<link>${SITE_URL}</link>
 
 <description>
 Cerita yang Menginspirasi
@@ -18,46 +21,43 @@ Cerita yang Menginspirasi
 <language>id-ID</language>
 
 ${articles
-  .map(
-    (article) => `
+    .map((article) => {
+        const url = `${SITE_URL}/${article.subcategories?.slug}/${article.slug}`;
+
+        return `
 <item>
 
 <title><![CDATA[${article.title}]]></title>
 
-<link>
-https://urbanstories.id/articles/${article.slug}
-</link>
+<link>${url}</link>
 
-<guid>
-https://urbanstories.id/articles/${article.slug}
-</guid>
+<guid>${url}</guid>
 
 <description><![CDATA[
 ${article.excerpt || article.title}
 ]]></description>
 
-<pubDate>
-${new Date(
-  article.published_at
-).toUTCString()}
-</pubDate>
+<pubDate>${new Date(
+            article.published_at
+        ).toUTCString()}</pubDate>
 
 ${article.authors?.name
-        ? `<author>${article.authors.name}</author>`
-        : ""}
+                ? `<author>${article.authors.name}</author>`
+                : ""}
 
-</item>
-`
-  )
-  .join("")}
+</item>`;
+    })
+    .join("")}
 
 </channel>
 </rss>`;
 
-  return new Response(xml, {
-    headers: {
-      "Content-Type":
-        "application/rss+xml; charset=utf-8",
-    },
-  });
+    return new Response(xml, {
+        headers: {
+            "Content-Type":
+                "application/rss+xml; charset=utf-8",
+            "Cache-Control":
+                "public, s-maxage=300, stale-while-revalidate=600",
+        },
+    });
 }

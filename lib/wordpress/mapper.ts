@@ -25,6 +25,16 @@ export function mapWpPostToHomepageArticle(
             term.taxonomy === "category"
     );
 
+    const tags = terms
+        .filter(
+            (term) =>
+                term.taxonomy === "post_tag"
+        )
+        .map((term) => ({
+            name: term.name,
+            slug: term.slug,
+        }));
+
     const categoryNames = Object.values(
         CATEGORY_SLUGS
     );
@@ -50,7 +60,7 @@ export function mapWpPostToHomepageArticle(
             const allowedSubs =
                 Object.values(
                     SUBCATEGORY_SLUGS[
-                        categorySlug as keyof typeof SUBCATEGORY_SLUGS
+                    categorySlug as keyof typeof SUBCATEGORY_SLUGS
                     ]
                 );
 
@@ -85,37 +95,42 @@ export function mapWpPostToHomepageArticle(
         is_top_story:
             post.is_top_story ?? false,
 
+        is_must_read:
+            post.is_must_read ?? false,
+
         authors: author
             ? {
-                  id: "",
-                  name: author.name,
-              }
+                id: "",
+                name: author.name,
+            }
             : null,
 
         categories: category
             ? {
-                  id: String(category.id),
-                  name: category.name,
-              }
+                id: String(category.id),
+                name: category.name,
+            }
             : null,
 
         subcategories: subcategory
             ? {
-                  id: String(subcategory.id),
-                  name: subcategory.name,
-                  slug: subcategory.slug,
-              }
+                id: String(subcategory.id),
+                name: subcategory.name,
+                slug: subcategory.slug,
+            }
             : null,
 
         media: post.featured_image_url
             ? {
-                  id: "",
-                  path: post.featured_image_url,
-                  alt_text:
-                      post.featured_image_alt ??
-                      null,
-                  title: null,
-              }
+                id: "",
+                path: post.featured_image_url,
+                alt_text:
+                    post.featured_image_alt ??
+                    null,
+                title: null,
+            }
             : null,
+
+        tags,
     };
 }

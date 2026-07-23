@@ -1,23 +1,16 @@
 import type { MetadataRoute } from "next";
 
+const BASE_URL = "https://urbanstories.id";
+
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://urbanstories.id";
-
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-      },
+    rules: {
+      userAgent: "*",
+      allow: "/",
+    },
 
-      {
-        userAgent: "Googlebot",
-        allow: "/",
-      },
-    ],
+    sitemap: `${BASE_URL}/sitemap.xml`,
 
-    sitemap: `${baseUrl}/sitemap.xml`,
-
-    host: baseUrl,
+    host: BASE_URL,
   };
 }

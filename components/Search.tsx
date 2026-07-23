@@ -33,9 +33,14 @@ export default function Search({
   const [results, setResults] =
     useState<SearchResult[]>([]);
 
+  const hasKeyword = keyword.trim().length > 0;
+
+  const displayedResults = hasKeyword
+    ? results
+    : [];
+
   useEffect(() => {
-    if (!keyword.trim()) {
-      setResults([]);
+    if (!hasKeyword) {
       return;
     }
 
@@ -63,7 +68,7 @@ export default function Search({
       controller.abort();
       clearTimeout(timer);
     };
-  }, [keyword]);
+  }, [keyword, hasKeyword]);
 
   function handleSearch() {
     const value = keyword.trim();
@@ -108,36 +113,33 @@ export default function Search({
         }`}
       />
 
-      {keyword.trim() &&
-        results.length > 0 && (
-          <div className="absolute left-0 right-0 top-full mt-3 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl">
+      {displayedResults.length > 0 && (
+        <div className="absolute left-0 right-0 top-full mt-3 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl">
+          {displayedResults.map((article) => (
+            <Link
+              key={article.id}
+              href={`/articles/${article.slug}`}
+              onClick={() =>
+                setKeyword("")
+              }
+              className="block border-b border-neutral-100 px-5 py-4 hover:bg-neutral-50 last:border-b-0"
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
+                {article.categories?.name}
+              </p>
 
-            {results.map((article) => (
-              <Link
-                key={article.id}
-                href={`/articles/${article.slug}`}
-                onClick={() =>
-                  setKeyword("")
-                }
-                className="block border-b border-neutral-100 px-5 py-4 hover:bg-neutral-50 last:border-b-0"
-              >
-                <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                  {article.categories?.name}
-                </p>
+              <h3 className="mt-1 font-semibold text-neutral-900">
+                {article.title}
+              </h3>
 
-                <h3 className="mt-1 font-semibold text-neutral-900">
-                  {article.title}
-                </h3>
-
-                <p className="mt-1 text-sm text-neutral-500">
-                  Oleh{" "}
-                  {article.authors?.name}
-                </p>
-              </Link>
-            ))}
-
-          </div>
-        )}
+              <p className="mt-1 text-sm text-neutral-500">
+                Oleh{" "}
+                {article.authors?.name}
+              </p>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

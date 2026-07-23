@@ -1,21 +1,33 @@
 export default function WebSiteSchema() {
   const schema = {
     "@context": "https://schema.org",
-
     "@type": "WebSite",
 
-    name: "Urbanstories",
+    "@id": "https://urbanstories.id/#website",
 
     url: "https://urbanstories.id",
 
+    name: "Urbanstories",
+
+    alternateName: "Urbanstories Indonesia",
+
+    description:
+      "Urbanstories menghadirkan berita, bisnis, teknologi, kesehatan, dan gaya hidup yang menginspirasi kehidupan urban.",
+
+    publisher: {
+      "@id": "https://urbanstories.id/#organization",
+    },
+
+    inLanguage: "id-ID",
+
     potentialAction: {
       "@type": "SearchAction",
-
-      target:
-        "https://urbanstories.id/search?q={search_term_string}",
-
-      "query-input":
-        "required name=search_term_string",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate:
+          "https://urbanstories.id/search?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
     },
   };
 

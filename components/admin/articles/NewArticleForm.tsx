@@ -44,6 +44,7 @@ type InitialArticle = {
   tags: string[];
 
   is_top_story: boolean;
+  is_must_read: boolean;
 };
 
 type NewArticleFormProps = {
@@ -82,6 +83,9 @@ export default function NewArticleForm({
     useState("");
 
   const [isTopStory, setIsTopStory] =
+    useState(false);
+
+  const [isMustRead, setIsMustRead] =
     useState(false);
 
   const [publishDate, setPublishDate] =
@@ -130,6 +134,10 @@ export default function NewArticleForm({
     setIsTopStory(
       initialData.is_top_story ?? false
     );
+
+    setIsMustRead(
+      initialData.is_must_read ?? false
+    );
   }, [initialData]);
 
   const slug = useMemo(
@@ -166,6 +174,7 @@ export default function NewArticleForm({
             .filter(Boolean),
 
           is_top_story: isTopStory,
+          is_must_read: isMustRead,
 
           status: "draft" as const,
         };
@@ -203,6 +212,7 @@ export default function NewArticleForm({
           .filter(Boolean),
 
         is_top_story: isTopStory,
+        is_must_read: isMustRead,
 
         status: "draft" as const,
 
@@ -284,6 +294,7 @@ export default function NewArticleForm({
             .filter(Boolean),
 
           is_top_story: isTopStory,
+          is_must_read: isMustRead,
 
           status: "published" as const,
         };
@@ -321,6 +332,7 @@ export default function NewArticleForm({
           .filter(Boolean),
 
         is_top_story: isTopStory,
+        is_must_read: isMustRead,
 
         status: "published" as const,
 
@@ -413,6 +425,7 @@ export default function NewArticleForm({
             .filter(Boolean),
 
           is_top_story: isTopStory,
+          is_must_read: isMustRead,
 
           status: "scheduled" as const,
 
@@ -455,6 +468,7 @@ export default function NewArticleForm({
           .filter(Boolean),
 
         is_top_story: isTopStory,
+        is_must_read: isMustRead,
 
         status: "scheduled" as const,
 
@@ -542,6 +556,7 @@ export default function NewArticleForm({
             .filter(Boolean),
 
           is_top_story: isTopStory,
+          is_must_read: isMustRead,
 
           status: "published" as const,
 
@@ -584,6 +599,7 @@ export default function NewArticleForm({
           .filter(Boolean),
 
         is_top_story: isTopStory,
+        is_must_read: isMustRead,
 
         status: "published" as const,
 
@@ -724,7 +740,7 @@ export default function NewArticleForm({
 
       </div>
 
-      <div className="flex h-9 w-[840px] items-center rounded-md border border-gray-200 px-4">
+      <div className="flex w-[840px] items-center gap-8 rounded-md border border-gray-200 px-4 py-2">
 
         <label className="flex items-center gap-3">
 
@@ -740,6 +756,24 @@ export default function NewArticleForm({
 
           <span className="text-sm font-medium text-gray-800">
             Set as Top Story
+          </span>
+
+        </label>
+
+        <label className="flex items-center gap-3">
+
+          <input
+            id="must-read"
+            type="checkbox"
+            checked={isMustRead}
+            onChange={(e) =>
+              setIsMustRead(e.target.checked)
+            }
+            className="h-4 w-4"
+          />
+
+          <span className="text-sm font-medium text-gray-800">
+            Set as Must Read
           </span>
 
         </label>

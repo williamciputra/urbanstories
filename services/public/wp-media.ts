@@ -1,52 +1,48 @@
 const WP_REST_URL =
-  process.env.WORDPRESS_REST_URL!;
+    process.env.WORDPRESS_REST_URL!;
 
 export type WpMedia = {
-  id: number;
+    id: number;
 
-  source_url: string;
+    source_url: string;
 
-  alt_text: string;
+    alt_text: string;
 
-  title: {
-    rendered: string;
-  };
+    title: {
+        rendered: string;
+    };
 };
 
 export async function getMediaMap(
-  ids: number[]
+    ids: number[]
 ): Promise<Record<number, WpMedia>> {
-  console.log(
-    "MEDIA IDS:",
-    ids
-  );
-
-  if (!ids.length) {
-    return {};
-  }
-
-  const response = await fetch(
-    `${WP_REST_URL}/media?include=${ids.join(",")}&per_page=100`,
-    {
-      next: {
-        revalidate: 60,
-      },
+    if (!ids.length) {
+        return {};
     }
-  );
 
-  const media =
-    (await response.json()) as WpMedia[];
+    const response = await fetch(
+        `${WP_REST_URL}/media?include=${ids.join(",")}&per_page=100`,
+        {
+            next: {
+                revalidate: 60,
+            },
+        }
+    );
 
-  console.log(
-    "MEDIA RESPONSE:",
-    JSON.stringify(media, null, 2)
-  );
+    if (!response.ok) {
+        throw new Error(
+            "Failed to fetch WordPress media."
+        );
+    }
 
-  return media.reduce(
-    (acc, item) => {
-      acc[item.id] = item;
-      return acc;
-    },
-    {} as Record<number, WpMedia>
-  );
+    const media =
+        (await response.json()) as WpMedia[];
+
+    return media.reduce(
+        (acc, item) => {
+            acc[item.id] = item;
+            return acc;
+        },
+        {} as Record<number, WpMedia>
+    );
 }

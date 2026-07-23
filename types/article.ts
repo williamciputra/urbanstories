@@ -13,7 +13,10 @@ export interface Article {
 
   subcategory?: string;
 
-  tags: string[];
+  tags: {
+    name: string;
+    slug: string;
+  }[];
 
   author: string;
 

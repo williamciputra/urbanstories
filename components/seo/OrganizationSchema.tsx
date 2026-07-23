@@ -1,17 +1,27 @@
 export default function OrganizationSchema() {
   const schema = {
     "@context": "https://schema.org",
-
     "@type": "Organization",
+
+    "@id": "https://urbanstories.id/#organization",
 
     name: "Urbanstories",
 
     url: "https://urbanstories.id",
 
-    logo: "https://urbanstories.id/icon-512.png",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://urbanstories.id/icon-512.png",
+      width: 512,
+      height: 512,
+    },
+
+    image: "https://urbanstories.id/opengraph-image.png",
 
     description:
-      "Urbanstories adalah media digital yang menghadirkan cerita tentang gaya hidup, kesehatan, teknologi terkini, dan isu-isu menarik yang menginspirasi masyarakat urban.",
+      "Urbanstories adalah media digital yang menghadirkan berita, bisnis, teknologi, kesehatan, dan gaya hidup yang menginspirasi masyarakat urban.",
+
+    email: "hello@urbanstories.id",
 
     sameAs: [],
   };

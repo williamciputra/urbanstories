@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Urbanstories",
 
     description:
-      "Cerita yang Menginspirasi.",
+      "Urbanstories menghadirkan cerita, wawasan, dan inspirasi seputar gaya hidup, kesehatan, bisnis, teknologi, hingga berbagai isu yang relevan dengan kehidupan masyarakat urban.",
 
     start_url: "/",
 

@@ -1,241 +1,164 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import {
-    getArticleBySlug,
-} from "@/services/public/articles";
+import { getArticleBySlug } from "@/services/public/articles";
+import { getArticlePageFeed } from "@/services/public/homepage-v2";
 
-import ReadingProgress from "../../../components/ReadingProgress";
-import RelatedArticles from "../../../components/RelatedArticles";
+import ReadingProgress from "@/components/ReadingProgress";
 import ArticleSchema from "@/components/seo/ArticleSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
+import ArticlePageV2 from "@/components/v2/article/ArticlePage";
+
+const SITE_URL = "https://urbanstories.id";
 
 interface Props {
-    params: Promise<{
-        category: string;
-        slug: string;
-    }>;
+  params: Promise<{
+    category: string;
+    slug: string;
+  }>;
 }
 
 export async function generateMetadata({
-    params,
+  params,
 }: Props): Promise<Metadata> {
-    const {
-        slug,
-        category,
-    } = await params;
+  const { slug } = await params;
 
-    const article =
-        await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
-    if (!article) {
-        notFound();
-    }
+  if (!article) {
+    notFound();
+  }
 
-    const imageUrl =
-        article.media?.path;
+  const articleUrl = `${SITE_URL}/${article.subcategories?.slug}/${article.slug}`;
 
-    return {
-        title: article.title,
+  const image =
+    article.media?.path ??
+    `${SITE_URL}/opengraph-image.png`;
 
-        description: article.excerpt,
+  return {
+    title: article.title,
 
-        alternates: {
-            canonical: `/${article.subcategories?.slug}/${article.slug}`,
+    description: article.excerpt,
+
+    authors: [
+      {
+        name:
+          article.authors?.name ??
+          "Urbanstories",
+      },
+    ],
+
+    creator: "Urbanstories",
+
+    publisher: "Urbanstories",
+
+    category:
+      article.categories?.name,
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+
+    keywords:
+      article.tags?.map(
+        (tag) => tag.name
+      ) ?? [],
+
+    alternates: {
+      canonical: articleUrl,
+    },
+
+    openGraph: {
+      type: "article",
+
+      url: articleUrl,
+
+      siteName: "Urbanstories",
+
+      locale: "id_ID",
+
+      title: article.title,
+
+      description: article.excerpt,
+
+      publishedTime:
+        article.published_at,
+
+      authors: article.authors?.name
+        ? [article.authors.name]
+        : [],
+
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: article.title,
         },
+      ],
+    },
 
-        authors: [
-            {
-                name:
-                    article.authors?.name ??
-                    "Urbanstories",
-            },
-        ],
+    twitter: {
+      card: "summary_large_image",
 
-        keywords: article.tags,
+      title: article.title,
 
-        openGraph: {
-            type: "article",
+      description: article.excerpt,
 
-            url: `https://urbanstories.id/${article.subcategories?.slug}/${article.slug}`,
-
-            title: article.title,
-
-            description: article.excerpt,
-
-            publishedTime:
-                article.published_at,
-
-            authors: article.authors?.name
-                ? [article.authors.name]
-                : [],
-
-            images: imageUrl
-                ? [
-                    {
-                        url: imageUrl,
-                        width: 1200,
-                        height: 630,
-                        alt: article.title,
-                    },
-                ]
-                : [],
-        },
-
-        twitter: {
-            card: "summary_large_image",
-
-            title: article.title,
-
-            description: article.excerpt,
-
-            images: imageUrl
-                ? [imageUrl]
-                : [],
-        },
-    };
+      images: [image],
+    },
+  };
 }
 
-export default async function ArticlePage({ params }: Props) {
-    const {
-        slug,
-        category,
-    } = await params;
+export default async function ArticlePage({
+  params,
+}: Props) {
+  const { slug } = await params;
 
-    const article =
-        await getArticleBySlug(slug);
+  const article =
+    await getArticleBySlug(slug);
 
-    if (!article) {
-        notFound();
-    }
+  if (!article) {
+    notFound();
+  }
 
-    const breadcrumbs = [
-        {
-            name: "Home",
-            url: "https://urbanstories.id",
-        },
-        {
-            name:
-                article.categories?.name ?? "",
-            url: `https://urbanstories.id/${article.categories?.name.toLowerCase()}`,
-        },
-        {
-            name: article.title,
-            url: `https://urbanstories.id/${article.subcategories?.slug}/${article.slug}`,
-        },
-    ];
+  const feed =
+    await getArticlePageFeed(article);
 
-    return (
-        <>
+  const breadcrumbs = [
+    {
+      name: "Home",
+      url: SITE_URL,
+    },
+    {
+      name:
+        article.categories?.name ?? "",
+      url: `${SITE_URL}/${article.categories?.name.toLowerCase()}`,
+    },
+    {
+      name: article.title,
+      url: articleUrl(article),
+    },
+  ];
 
-            <ArticleSchema article={article} />
+  return (
+    <>
+      <ArticleSchema article={article} />
 
-            <BreadcrumbSchema items={breadcrumbs} />
-            <ReadingProgress />
+      <BreadcrumbSchema
+        items={breadcrumbs}
+      />
 
-            <Header />
+      <ReadingProgress />
 
-            <main className="min-h-screen bg-[#FAF8F3]">
-                <article className="mx-auto max-w-7xl px-6 py-16">
+      <ArticlePageV2
+        feed={feed}
+      />
+    </>
+  );
+}
 
-                    <div className="ml-16 max-w-3xl">
-
-                        <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-neutral-500">
-                            <Link
-                                href="/"
-                                className="transition hover:text-black"
-                            >
-                                Home
-                            </Link>
-
-                            <span>/</span>
-
-                            <Link
-                                href={`/category/${article.categories?.name.toLowerCase()}/${article.subcategories?.slug}`}
-                                className="transition hover:text-black"
-                            >
-                                {article.categories?.name}
-                            </Link>
-
-                            {article.subcategories?.name && (
-                                <>
-                                    <span>/</span>
-
-                                    <Link
-                                        href={`/category/${article.categories?.name.toLowerCase()}/${article.subcategories?.slug}`}
-                                        className="transition hover:text-black"
-                                    >
-                                        {article.subcategories.name}
-                                    </Link>
-                                </>
-                            )}
-                        </nav>
-
-                        <h1 className="text-5xl font-bold leading-[1.05] tracking-[-0.03em] text-neutral-900 md:text-7xl">
-                            {article.title}
-                        </h1>
-
-                        <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-neutral-500">
-
-                            <span>Oleh {article.authors?.name}</span>
-
-                            <span>•</span>
-
-                            <span>
-                                {new Date(
-                                    article.published_at
-                                ).toLocaleDateString("id-ID", {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                })}
-                            </span>
-
-                        </div>
-
-                        <div className="relative mt-10 aspect-[3/2] overflow-hidden">
-                            {article.media?.path && (
-                                <Image
-                                    src={article.media.path}
-                                    alt={
-                                        article.media.alt_text ??
-                                        article.title
-                                    }
-                                    fill
-                                    priority
-                                    unoptimized
-                                    className="object-cover"
-                                />
-                            )}
-                        </div>
-
-                        {article.media?.title && (
-                            <p className="mt-3 text-sm italic text-neutral-500">
-                                {article.media.title}
-                            </p>
-                        )}
-
-                        <div
-                            className="article-content mt-12"
-                            dangerouslySetInnerHTML={{
-                                __html: article.content,
-                            }}
-                        />
-
-                        <RelatedArticles
-                            currentSlug={article.slug}
-                            currentTags={article.tags}
-                        />
-
-                    </div>
-
-                </article>
-            </main>
-            <Footer />
-        </>
-    );
+function articleUrl(article: Awaited<ReturnType<typeof getArticleBySlug>>) {
+  return `${SITE_URL}/${article?.subcategories?.slug}/${article?.slug}`;
 }

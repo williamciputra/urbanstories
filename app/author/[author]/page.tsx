@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/v2/layout/Header";
+import Footer from "@/components/v2/layout/Footer";
 import ArticleCard from "@/components/ArticleCard";
 
-import {
-  getArticlesByAuthor,
-} from "@/services/public/articles";
+import { getArticlesByAuthor } from "@/services/public/articles";
 
 interface Props {
   params: Promise<{
@@ -17,12 +15,8 @@ interface Props {
   }>;
 }
 
-export async function generateMetadata({
-  params,
-}: Props): Promise<Metadata> {
-  const { author } = await params;
-
-  const authorName = author
+function formatAuthorName(slug: string) {
+  return slug
     .split("-")
     .map(
       (word) =>
@@ -30,6 +24,15 @@ export async function generateMetadata({
         word.slice(1)
     )
     .join(" ");
+}
+
+export async function generateMetadata({
+  params,
+}: Props): Promise<Metadata> {
+  const { author } = await params;
+
+  const authorName =
+    formatAuthorName(author);
 
   return {
     title: `${authorName} | Urbanstories`,
@@ -53,14 +56,8 @@ export default async function AuthorPage({
 }: Props) {
   const { author } = await params;
 
-  const authorName = author
-    .split("-")
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() +
-        word.slice(1)
-    )
-    .join(" ");
+  const authorName =
+    formatAuthorName(author);
 
   const authorArticles =
     await getArticlesByAuthor(author);
@@ -73,40 +70,44 @@ export default async function AuthorPage({
     <>
       <Header />
 
-      <main className="min-h-screen bg-[#FAF8F3]">
+      <main className="bg-[#FAF8F3]">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:py-24">
+          <nav className="flex items-center gap-2 text-sm text-neutral-500">
+            <Link
+              href="/"
+              className="transition hover:text-neutral-900"
+            >
+              Home
+            </Link>
 
-        <div className="mx-auto max-w-7xl px-6 py-20">
+            <span>/</span>
 
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm text-neutral-500 transition hover:text-black"
-          >
-            ← Kembali ke Beranda
-          </Link>
+            <span className="font-medium text-neutral-900">
+              {authorName}
+            </span>
+          </nav>
 
           <section className="mt-12 flex flex-col items-center text-center">
-
             <Image
-              src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
+              src="/avatar-default.png"
               alt={authorName}
               width={140}
               height={140}
-              unoptimized
-              className="rounded-full object-cover"
+              priority
+              className="rounded-full border border-neutral-200 bg-white object-cover"
             />
 
-            <h1 className="mt-6 text-5xl font-bold tracking-tight text-neutral-900 md:text-6xl">
+            <h1 className="mt-6 text-4xl font-bold tracking-tight text-neutral-900 md:text-5xl">
               {authorName}
             </h1>
 
             <p className="mt-6 max-w-2xl leading-8 text-neutral-600">
-              Jurnalis dan editor dengan pengalaman lebih dari delapan tahun di
-              industri media digital. Menulis berbagai topik melalui pendekatan
-              jurnalistik yang mendalam, akurat, dan mudah dipahami.
+              Kumpulan artikel yang ditulis oleh penulis Urbanstories. Profil,
+              foto, dan informasi penulis akan ditampilkan secara otomatis saat
+              tersedia.
             </p>
 
-            <div className="mt-8 flex items-center gap-6 text-sm uppercase tracking-[0.2em] text-neutral-500">
-
+            <div className="mt-8 flex items-center gap-4 text-xs font-medium uppercase tracking-[0.2em] text-neutral-500 md:text-sm">
               <span>
                 {authorArticles.length} Artikel
               </span>
@@ -114,26 +115,20 @@ export default async function AuthorPage({
               <span>•</span>
 
               <span>Urbanstories</span>
-
             </div>
-
           </section>
 
           <div className="my-16 border-b border-neutral-200" />
 
-          <section className="grid gap-14 md:grid-cols-2 lg:grid-cols-3">
-
+          <section className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
             {authorArticles.map((article) => (
               <ArticleCard
                 key={article.id}
                 article={article}
               />
             ))}
-
           </section>
-
         </div>
-
       </main>
 
       <Footer />
