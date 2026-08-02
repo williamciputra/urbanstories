@@ -15,19 +15,23 @@ export default function ArticleSchema({
     article.media?.path ??
     `${SITE_URL}/opengraph-image.png`;
 
+  const articleUrl = `${SITE_URL}/${article.subcategories?.slug ??
+    article.categories?.name.toLowerCase()
+    }/${article.slug}`;
+
   const schema = {
     "@context": "https://schema.org",
 
     "@type": "NewsArticle",
 
-    "@id": `${SITE_URL}/articles/${article.slug}#article`,
+    "@id": `${articleUrl}#article`,
 
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_URL}/articles/${article.slug}`,
+      "@id": articleUrl,
     },
 
-    url: `${SITE_URL}/articles/${article.slug}`,
+    url: articleUrl,
 
     headline: article.title,
 
