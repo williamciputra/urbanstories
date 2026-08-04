@@ -30,6 +30,10 @@ export type WpRestPost = {
 
     featured_image_alt: string | null;
 
+    yoast_head_json?: {
+        description?: string;
+    };
+
     is_top_story: boolean;
 
     is_must_read: boolean;
@@ -58,20 +62,55 @@ export type WpRestPost = {
 };
 
 export async function getWpHomepagePosts() {
-    const response = await fetch(
-        `${WP_REST_URL}/posts?_embed&per_page=100`,
+    const perPage = 100;
+
+    const firstResponse = await fetch(
+        `${WP_REST_URL}/posts?_embed&per_page=${perPage}&page=1`,
         {
             cache: "no-store",
         }
     );
 
-    if (!response.ok) {
+    if (!firstResponse.ok) {
         throw new Error(
             "Failed to fetch WordPress posts."
         );
     }
 
-    return (await response.json()) as WpRestPost[];
+    const totalPages = Number(
+        firstResponse.headers.get(
+            "X-WP-TotalPages"
+        ) ?? "1"
+    );
+
+    const posts =
+        (await firstResponse.json()) as WpRestPost[];
+
+    for (
+        let page = 2;
+        page <= totalPages;
+        page++
+    ) {
+        const response = await fetch(
+            `${WP_REST_URL}/posts?_embed&per_page=${perPage}&page=${page}`,
+            {
+                cache: "no-store",
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch WordPress posts page ${page}.`
+            );
+        }
+
+        const pagePosts =
+            (await response.json()) as WpRestPost[];
+
+        posts.push(...pagePosts);
+    }
+
+    return posts;
 }
 
 export async function getWpTagBySlug(

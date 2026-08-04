@@ -5,15 +5,15 @@ export const navigation = [
     children: [
       {
         name: "Nasional",
-        href: "/news/nasional",
+        href: "/category/news/nasional"
       },
       {
         name: "Internasional",
-        href: "/news/internasional",
+        href: "/category/news/internasional"
       },
       {
         name: "Ekonomi",
-        href: "/news/ekonomi",
+        href: "/category/news/ekonomi",
       },
     ],
   },
@@ -24,23 +24,23 @@ export const navigation = [
     children: [
       {
         name: "Kesehatan",
-        href: "/lifestyle/kesehatan",
+        href: "/category/lifestyle/kesehatan",
       },
       {
         name: "Parasayu",
-        href: "/lifestyle/parasayu",
+        href: "/category/lifestyle/parasayu",
       },
       {
         name: "Travel",
-        href: "/lifestyle/travel",
+        href: "/category/lifestyle/travel",
       },
       {
         name: "Fashion",
-        href: "/lifestyle/fashion",
+        href: "/category/lifestyle/fashion",
       },
       {
         name: "Kuliner",
-        href: "/lifestyle/kuliner",
+        href: "/category/lifestyle/kuliner",
       },
     ],
   },
@@ -51,19 +51,19 @@ export const navigation = [
     children: [
       {
         name: "Film",
-        href: "/entertainment/film",
+        href: "/category/entertainment/film",
       },
       {
         name: "Musik",
-        href: "/entertainment/musik",
+        href: "/category/entertainment/musik",
       },
       {
         name: "Hot Issue",
-        href: "/entertainment/hot-issue",
+        href: "/category/entertainment/hot-issue",
       },
       {
         name: "Pop Art",
-        href: "/entertainment/pop-art",
+        href: "/category/entertainment/pop-art",
       },
     ],
   },
@@ -74,15 +74,15 @@ export const navigation = [
     children: [
       {
         name: "Gadgets",
-        href: "/technology/gadgets",
+        href: "/category/technology/gadgets",
       },
       {
         name: "Apps",
-        href: "/technology/apps",
+        href: "/category/technology/apps",
       },
       {
         name: "AI",
-        href: "/technology/ai",
+        href: "/category/technology/ai",
       },
     ],
   },
@@ -98,20 +98,20 @@ export const navigation = [
     href: "/explore",
     children: [
       {
-        name: "Horoscope",
-        href: "/explore/horoscope",
+        name: "Refleksi",
+        href: "/category/explore/refleksi",
       },
       {
         name: "Intimacy",
-        href: "/explore/intimacy",
+        href: "/category/explore/intimacy",
       },
       {
         name: "Leksikon",
-        href: "/explore/leksikon",
+        href: "/category/explore/leksikon",
       },
       {
-        name: "Horror",
-        href: "/explore/horror",
+        name: "Parents",
+        href: "/category/explore/parents",
       },
     ],
   },

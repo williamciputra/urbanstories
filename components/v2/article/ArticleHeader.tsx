@@ -94,7 +94,9 @@ export default function ArticleHeader({
 
                     <ArticleShare
                         title={article.title}
-                        url={`https://urbanstories.id/${article.subcategories?.slug}/${article.slug}`}
+                        url={`https://urbanstories.id/${article.subcategories?.slug ??
+                            article.categories?.name.toLowerCase()
+                            }/${article.slug}`}
                     />
 
                 </div>

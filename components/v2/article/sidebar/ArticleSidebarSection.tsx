@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 type ArticleSidebarSectionProps = {
     title: string;
@@ -32,7 +33,7 @@ export default function ArticleSidebarSection({
                 {articles.map((article) => (
                     <Link
                         key={article.id}
-                        href={`/${article.subcategories?.slug}/${article.slug}`}
+                        href={getArticlePath(article)}
                         className="block border-b border-neutral-100 py-3 first:pt-0 last:border-b-0 last:pb-0"
                     >
                         <h3 className="text-[15px] font-semibold leading-6 text-neutral-900 transition hover:text-neutral-600">

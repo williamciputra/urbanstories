@@ -16,27 +16,40 @@ export type WpMedia = {
 export async function getMediaMap(
     ids: number[]
 ): Promise<Record<number, WpMedia>> {
+
     if (!ids.length) {
         return {};
     }
 
-    const response = await fetch(
-        `${WP_REST_URL}/media?include=${ids.join(",")}&per_page=100`,
-        {
-            next: {
-                revalidate: 60,
-            },
-        }
-    );
+    const chunks: number[][] = [];
 
-    if (!response.ok) {
-        throw new Error(
-            "Failed to fetch WordPress media."
-        );
+    for (let i = 0; i < ids.length; i += 100) {
+        chunks.push(ids.slice(i, i + 100));
     }
 
-    const media =
-        (await response.json()) as WpMedia[];
+    const media: WpMedia[] = [];
+
+    for (const chunk of chunks) {
+
+        const response = await fetch(
+            `${WP_REST_URL}/media?include=${chunk.join(",")}&per_page=100`,
+            {
+                next: {
+                    revalidate: 60,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Failed to fetch WordPress media."
+            );
+        }
+
+        media.push(
+            ...((await response.json()) as WpMedia[])
+        );
+    }
 
     return media.reduce(
         (acc, item) => {

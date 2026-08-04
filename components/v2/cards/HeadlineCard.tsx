@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 type HeadlineCardProps = {
     article: HomepageArticle;
@@ -14,7 +15,7 @@ export default function HeadlineCard({
 
     return (
         <Link
-            href={`/${article.subcategories?.slug}/${article.slug}`}
+            href={getArticlePath(article)}
             className="group block"
         >
             <article>

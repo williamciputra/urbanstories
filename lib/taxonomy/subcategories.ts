@@ -27,10 +27,10 @@ export const SUBCATEGORY_SLUGS = {
   },
 
   explore: {
-    horoscope: "Horoscope",
+    refleksi: "Refleksi",
     intimacy: "Intimacy",
     leksikon: "Leksikon",
-    horror: "Horror",
+    parents: "Parents",
   },
 
   sports: {},
@@ -42,7 +42,7 @@ export function getSubcategoryName(
 ) {
   const category =
     SUBCATEGORY_SLUGS[
-      categorySlug as keyof typeof SUBCATEGORY_SLUGS
+    categorySlug as keyof typeof SUBCATEGORY_SLUGS
     ];
 
   if (!category) {
@@ -51,7 +51,7 @@ export function getSubcategoryName(
 
   return (
     category[
-      subcategorySlug as keyof typeof category
+    subcategorySlug as keyof typeof category
     ] ?? null
   );
 }

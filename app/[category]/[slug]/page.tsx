@@ -29,7 +29,9 @@ export async function generateMetadata({
     notFound();
   }
 
-  const articleUrl = `${SITE_URL}/${article.subcategories?.slug}/${article.slug}`;
+  const articleUrl = `${SITE_URL}/${article.subcategories?.slug ??
+    article.categories?.name.toLowerCase()
+    }/${article.slug}`;
 
   const image =
     article.media?.path ??
@@ -159,6 +161,12 @@ export default async function ArticlePage({
   );
 }
 
-function articleUrl(article: Awaited<ReturnType<typeof getArticleBySlug>>) {
-  return `${SITE_URL}/${article?.subcategories?.slug}/${article?.slug}`;
+function articleUrl(
+  article: Awaited<
+    ReturnType<typeof getArticleBySlug>
+  >
+) {
+  return `${SITE_URL}/${article?.subcategories?.slug ??
+    article?.categories?.name.toLowerCase()
+    }/${article?.slug}`;
 }

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 export default function NewsFeedCard({
   article,
@@ -13,7 +14,7 @@ export default function NewsFeedCard({
 
   return (
     <Link
-      href={`/${article.subcategories?.slug}/${article.slug}`}
+      href={getArticlePath(article)}
       className="group block"
     >
       <article className="grid grid-cols-[120px_1fr] items-center gap-5 border-b border-neutral-200 p-5 last:border-b-0">

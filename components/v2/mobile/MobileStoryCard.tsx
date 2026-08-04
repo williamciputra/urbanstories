@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 type MobileStoryCardProps = {
     article: HomepageArticle;
@@ -15,7 +16,7 @@ export default function MobileStoryCard({
 
     return (
         <Link
-            href={`/${article.subcategories?.slug}/${article.slug}`}
+            href={getArticlePath(article)}
             className="block"
         >
             <article className="relative overflow-hidden rounded-xl">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 type MustReadWidgetProps = {
     articles: HomepageArticle[];
@@ -21,7 +22,7 @@ export default function MustReadWidget({
                 {articles.map((article, index) => (
                     <Link
                         key={article.id}
-                        href={`/${article.subcategories?.slug}/${article.slug}`}
+                        href={getArticlePath(article)}
                         className="group flex gap-4"
                     >
                         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm font-bold text-white">

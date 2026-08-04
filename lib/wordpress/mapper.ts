@@ -84,7 +84,11 @@ export function mapWpPostToHomepageArticle(
 
         slug: post.slug,
 
-        excerpt: post.excerpt.rendered,
+        excerpt:
+            post.yoast_head_json?.description?.trim() ||
+            (post.excerpt.rendered ?? "")
+                .replace(/<[^>]*>/g, "")
+                .trim(),
 
         content: post.content.rendered,
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import type { HomepageArticle } from "@/services/public/articles";
+import { getArticlePath } from "@/lib/utils/articleUrl";
 
 type ExploreSectionProps = {
     articles: HomepageArticle[];
@@ -36,7 +37,7 @@ export default function ExploreSection({
             <div className="hidden grid-cols-[1.65fr_1fr] items-stretch gap-5 lg:grid">
 
                 <Link
-                    href={`/${featured.subcategories?.slug}/${featured.slug}`}
+                    href={getArticlePath(featured)}
                     className="block"
                 >
                     <article className="group relative overflow-hidden rounded-xl">
@@ -85,7 +86,7 @@ export default function ExploreSection({
                         <article key={article.id}>
 
                             <Link
-                                href={`/${article.subcategories?.slug}/${article.slug}`}
+                                href={getArticlePath(article)}
                             >
                                 <h3 className="text-[15px] font-semibold leading-6 text-neutral-900 transition hover:text-neutral-600">
                                     {article.title}
@@ -114,7 +115,7 @@ export default function ExploreSection({
             <div className="lg:hidden">
 
                 <Link
-                    href={`/${featured.subcategories?.slug}/${featured.slug}`}
+                    href={getArticlePath(featured)}
                     className="block"
                 >
                     <article className="group overflow-hidden rounded-2xl">
@@ -165,7 +166,7 @@ export default function ExploreSection({
                             className="py-3 first:pt-0 last:pb-0"
                         >
                             <Link
-                                href={`/${article.subcategories?.slug}/${article.slug}`}
+                                href={getArticlePath(article)}
                             >
                                 <h3 className="text-[17px] font-semibold leading-6 text-neutral-900 transition hover:text-neutral-600">
                                     {article.title}
