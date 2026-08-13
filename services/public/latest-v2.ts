@@ -14,13 +14,10 @@ export type LatestFeed = {
     totalPages: number;
 };
 
-export async function getLatestFeed(
+function buildLatestFeed(
+    articles: HomepageArticle[],
     page = 1
-): Promise<LatestFeed> {
-
-    const articles =
-        await getHomepageSource();
-
+): LatestFeed {
     const topStory =
         articles.find(
             (article) => article.is_top_story
@@ -81,7 +78,7 @@ export async function getLatestFeed(
             1,
             Math.ceil(
                 remainingArticles.length /
-                LATEST_PER_PAGE
+                    LATEST_PER_PAGE
             )
         );
 
@@ -93,12 +90,32 @@ export async function getLatestFeed(
         articles:
             remainingArticles.slice(
                 start,
-                start +
-                    LATEST_PER_PAGE
+                start + LATEST_PER_PAGE
             ),
 
         currentPage: page,
-
         totalPages,
     };
+}
+
+export async function getLatestFeed(
+    page = 1
+): Promise<LatestFeed> {
+    const articles =
+        await getHomepageSource();
+
+    return buildLatestFeed(
+        articles,
+        page
+    );
+}
+
+export function getLatestFeedFromArticles(
+    articles: HomepageArticle[],
+    page = 1
+): LatestFeed {
+    return buildLatestFeed(
+        articles,
+        page
+    );
 }

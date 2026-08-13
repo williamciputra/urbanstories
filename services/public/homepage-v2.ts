@@ -12,7 +12,7 @@ import {
 } from "./wordpress/articles";
 
 import {
-    getLatestFeed,
+    getLatestFeedFromArticles,
 } from "./latest-v2";
 
 export type HomepageFeed = {
@@ -107,7 +107,7 @@ export async function getHomepageFeed(): Promise<HomepageFeed> {
     );
 
     const latest =
-        await getLatestFeed(1);
+        getLatestFeedFromArticles(articles, 1);
 
     return {
         topStory,

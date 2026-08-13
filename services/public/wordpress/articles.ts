@@ -1,4 +1,7 @@
-import { getWpHomepagePosts } from "@/services/public/wp-rest";
+import {
+  getWpHomepagePosts,
+  getWpHomepagePostsLight,
+} from "@/services/public/wp-rest";
 import { getMediaMap } from "@/services/public/wp-media";
 import { mapWpPostToHomepageArticle } from "@/lib/wordpress/mapper";
 
@@ -37,6 +40,42 @@ async function getAllArticles(): Promise<
           null,
       };
     }
+
+    return article;
+  });
+}
+
+async function getAllArticlesLight(): Promise<
+  HomepageArticle[]
+> {
+  const posts =
+    await getWpHomepagePostsLight();
+
+  const mediaIds = posts
+    .map((post) => post.featured_media)
+    .filter((id) => id > 0);
+
+  const mediaMap =
+    await getMediaMap(mediaIds);
+
+  return posts.map((post) => {
+    const article =
+      mapWpPostToHomepageArticle(post);
+
+    const media =
+      mediaMap[post.featured_media];
+
+    article.media = media
+      ? {
+          id: String(media.id),
+          path: media.source_url,
+          alt_text:
+            media.alt_text ?? null,
+          title:
+            media.title.rendered ??
+            null,
+        }
+      : null;
 
     return article;
   });
@@ -86,5 +125,5 @@ export async function getLatestArticles() {
 }
 
 export async function getHomepageSource() {
-  return getAllArticles();
+  return getAllArticlesLight();
 }
