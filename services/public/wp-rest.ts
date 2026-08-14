@@ -61,6 +61,28 @@ export type WpRestPost = {
     };
 };
 
+export async function getWpPostBySlug(
+    slug: string
+): Promise<WpRestPost | null> {
+    const response = await fetch(
+        `${WP_REST_URL}/posts?slug=${encodeURIComponent(slug)}&_embed`,
+        {
+            cache: "no-store",
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            "Failed to fetch WordPress post."
+        );
+    }
+
+    const posts =
+        (await response.json()) as WpRestPost[];
+
+    return posts[0] ?? null;
+}
+
 export async function getWpHomepagePosts() {
     const perPage = 100;
 

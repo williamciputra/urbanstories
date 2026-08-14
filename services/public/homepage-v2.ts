@@ -44,10 +44,9 @@ export type ArticlePageFeed = {
     relatedArticles: HomepageArticle[];
 };
 
-export async function getHomepageFeed(): Promise<HomepageFeed> {
-    const articles =
-        await getHomepageSource();
-
+export function getHomepageFeedFromArticles(
+    articles: HomepageArticle[]
+): HomepageFeed {
     const topStory =
         articles.find(
             (article) => article.is_top_story
@@ -126,18 +125,31 @@ export async function getHomepageFeed(): Promise<HomepageFeed> {
     };
 }
 
+export async function getHomepageFeed(): Promise<HomepageFeed> {
+    const articles =
+        await getHomepageSource();
+
+    return getHomepageFeedFromArticles(
+        articles
+    );
+}
+
 export async function getArticlePageFeed(
     article: PublicArticle
 ): Promise<ArticlePageFeed> {
+    const articles =
+        await getHomepageSource();
+
     const homepage =
-        await getHomepageFeed();
+        getHomepageFeedFromArticles(articles);
 
     const relatedArticles =
         await getRelatedArticles(
             article.slug,
             article.subcategories?.slug ??
             null,
-            article.tags
+            article.tags,
+            articles
         );
 
     return {

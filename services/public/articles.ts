@@ -4,6 +4,7 @@ import { mapWpPostToHomepageArticle } from "@/lib/wordpress/mapper";
 import { getMediaMap } from "@/services/public/wp-media";
 import {
   getWpHomepagePosts,
+  getWpPostBySlug,
   getWpPostsByTagId,
   getWpTagBySlug,
 } from "@/services/public/wp-rest";
@@ -89,16 +90,26 @@ export async function getHomepageSource(): Promise<
 export async function getArticleBySlug(
   slug: string
 ): Promise<PublicArticle | null> {
-  const articles =
-    await getHomepageSource();
+  const post =
+    await getWpPostBySlug(slug);
+
+  if (!post) {
+    return null;
+  }
 
   const article =
-    articles.find(
-      (item) => item.slug === slug
-    );
+    mapWpPostToHomepageArticle(post);
 
-  if (!article) {
-    return null;
+  if (post.featured_image_url) {
+    article.media = {
+      id: String(post.featured_media),
+      path: post.featured_image_url,
+      alt_text:
+        post.featured_image_alt ?? null,
+      title: null,
+    };
+  } else {
+    article.media = null;
   }
 
   return article;
@@ -201,10 +212,9 @@ export async function getRelatedArticles(
   tags: {
     name: string;
     slug: string;
-  }[]
+  }[],
+  articles: HomepageArticle[]
 ): Promise<HomepageArticle[]> {
-  const articles =
-    await getHomepageSource();
 
   /*
    * Prioritas 1:
