@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import NewsFeed from "@/components/NewsFeed";
+import { V3Header as Header } from "@/components/v3/shared/V3Chrome";
+import { V3Footer as Footer } from "@/components/v3/shared/V3Chrome";
+import V3SubcategoryArticleList from "@/components/v3/category/V3SubcategoryArticleList";
 
 import {
-    getArticlesBySubcategory,
+    getSubcategoryArticlePage,
 } from "@/services/public/articles";
 
 import {
@@ -58,10 +58,12 @@ export default async function SubcategoryPage({
         subcategory,
     } = await params;
 
-    const articles =
-        await getArticlesBySubcategory(
+    const { articles, hasMore } =
+        await getSubcategoryArticlePage(
             category,
-            subcategory
+            subcategory,
+            1,
+            20
         );
 
     if (articles.length === 0) {
@@ -72,53 +74,52 @@ export default async function SubcategoryPage({
         <>
             <Header />
 
-            <main className="min-h-screen bg-[#FAF8F3]">
+            <main className="min-h-screen bg-white">
+                <div className="mx-auto max-w-7xl px-5 pt-8 pb-12 sm:px-6 sm:pt-10 sm:pb-14 lg:pt-12 lg:pb-16">
+                    <div className="mb-6">
+            <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-[#D71920] lg:gap-2 lg:text-[13px] lg:font-medium">
+              <Link
+                href="/"
+                className="transition-colors hover:text-neutral-900"
+              >
+                Home
+              </Link>
 
-                <div className="mx-auto max-w-7xl px-6 py-20">
+              <span className="mx-1.5">›</span>
 
-                    <nav className="flex items-center gap-2 text-sm text-neutral-500">
+              <Link
+                href={`/${category}`}
+                className="transition-colors hover:text-neutral-900"
+              >
+                {getCategoryName(category)}
+              </Link>
 
-                        <Link
-                            href="/"
-                            className="transition hover:text-black"
-                        >
-                            Home
-                        </Link>
+              <span className="mx-1.5">›</span>
 
-                        <span>/</span>
+              <span>{getSubcategoryName(category, subcategory)}</span>
+            </nav>
+          </div>
 
-                        <Link
-                            href={`/${category}`}
-                            className="transition hover:text-black"
-                        >
-                            {getCategoryName(category)}
-                        </Link>
-
-                        <span>/</span>
-
-                        <span className="font-medium text-neutral-900">
-                            {getSubcategoryName(
-                                category,
-                                subcategory
-                            )}
-                        </span>
-
-                    </nav>
-
-                    <div className="mt-12">
-
-                        <NewsFeed
-                            articles={articles}
+                    <header className="mb-7 mt-0 flex items-center gap-3">
+                        <span
+                            aria-hidden="true"
+                            className="panel d-inline-block bg-primary w-8px h-8px translate-y-px"
                         />
+                        <h1 className="h4 xl:h3 -ls-1 xl:-ls-2 m-0 text-inherit">
+                            {getSubcategoryName(category, subcategory)}
+                        </h1>
+                    </header>
 
-                    </div>
-
+                    <V3SubcategoryArticleList
+                            articles={articles}
+                            categorySlug={category}
+                            subcategorySlug={subcategory}
+                            initialHasMore={hasMore}
+                        />
                 </div>
-
             </main>
 
             <Footer />
-
         </>
     );
 }

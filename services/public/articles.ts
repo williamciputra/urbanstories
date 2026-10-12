@@ -1,9 +1,13 @@
 import { getCategoryName } from "@/lib/taxonomy/categories";
+import { SUBCATEGORY_SLUGS } from "@/lib/taxonomy/subcategories";
 import { getSubcategoryName } from "@/lib/taxonomy/subcategories";
 import { mapWpPostToHomepageArticle } from "@/lib/wordpress/mapper";
 import { getMediaMap } from "@/services/public/wp-media";
 import {
   getWpHomepagePosts,
+  getWpPostsBySubcategorySlug,
+  getWpSubcategoryPostsPage,
+  getWpPostsByCategorySlug,
   getWpPostBySlug,
   getWpPostsByTagId,
   getWpTagBySlug,
@@ -23,6 +27,9 @@ export type HomepageArticle = {
   authors: {
     id: string;
     name: string;
+    slug: string;
+    avatarUrl: string | null;
+    bio: string | null;
   } | null;
 
   categories: {
@@ -46,6 +53,7 @@ export type HomepageArticle = {
     path: string;
     alt_text: string | null;
     title: string | null;
+    caption: string | null;
   } | null;
 };
 
@@ -80,6 +88,8 @@ export async function getHomepageSource(): Promise<
         title:
           media.title.rendered ??
           null,
+        caption:
+          media.caption?.rendered ?? null,
       }
       : null;
 
@@ -107,6 +117,8 @@ export async function getArticleBySlug(
       alt_text:
         post.featured_image_alt ?? null,
       title: null,
+      caption:
+        post._embedded?.["wp:featuredmedia"]?.[0]?.caption?.rendered ?? null,
     };
   } else {
     article.media = null;
@@ -121,46 +133,121 @@ export async function getArticlesByCategory(
   const categoryName =
     getCategoryName(category) ?? category;
 
-  const articles =
-    await getHomepageSource();
+  const subcategories =
+    SUBCATEGORY_SLUGS[
+      category as keyof typeof SUBCATEGORY_SLUGS
+    ];
+
+  // Pertahankan perilaku kategori tanpa subkategori, termasuk Sports.
+  if (!subcategories || Object.keys(subcategories).length === 0) {
+    const posts =
+      await getWpPostsByCategorySlug(category);
+
+    const mediaIds = posts
+      .map((post) => post.featured_media)
+      .filter((id) => id > 0);
+
+    const mediaMap = await getMediaMap(mediaIds);
+
+    return posts
+      .map((post) => {
+        const article =
+          mapWpPostToHomepageArticle(post);
+
+        const media = mediaMap[post.featured_media];
+
+        article.media = media
+          ? {
+              id: String(media.id),
+              path: media.source_url,
+              alt_text: media.alt_text ?? null,
+              title: media.title.rendered ?? null,
+              caption: media.caption?.rendered ?? null,
+            }
+          : null;
+
+        return article;
+      })
+      .filter(
+        (article) =>
+          article.categories?.name === categoryName
+      );
+  }
+
+  const subcategoryEntries = Object.keys(subcategories);
+
+  const postsBySubcategory = await Promise.all(
+    subcategoryEntries.map((subcategorySlug) =>
+      getWpPostsBySubcategorySlug(subcategorySlug, 8)
+    )
+  );
+
+  const articles = postsBySubcategory
+    .flat()
+    .map((post) => mapWpPostToHomepageArticle(post));
+
+  // Pertahankan filter kategori induk dan hanya artikel yang
+  // terpetakan ke salah satu subkategori resmi kategori ini.
+  const allowedSubcategories = new Set(subcategoryEntries);
 
   return articles.filter(
     (article) =>
-      article.categories?.name ===
-      categoryName
+      article.categories?.name === categoryName &&
+      article.subcategories !== null &&
+      allowedSubcategories.has(article.subcategories.slug)
   );
+}
+
+export async function getSubcategoryArticlePage(
+  categorySlug: string,
+  subcategorySlug: string,
+  page = 1,
+  limit = 20
+): Promise<{ articles: HomepageArticle[]; hasMore: boolean }> {
+  const categoryName = getCategoryName(categorySlug);
+  const subcategoryName = getSubcategoryName(categorySlug, subcategorySlug);
+
+  if (
+    !categoryName ||
+    !subcategoryName ||
+    !Number.isSafeInteger(page) ||
+    page < 1
+  ) {
+    return { articles: [], hasMore: false };
+  }
+
+  const result = await getWpSubcategoryPostsPage(
+    subcategorySlug,
+    page,
+    limit
+  );
+
+  const articles = result.posts
+    .map((post) => mapWpPostToHomepageArticle(post))
+    .filter(
+      (article) =>
+        article.categories?.name === categoryName &&
+        article.subcategories?.name === subcategoryName
+    );
+
+  return {
+    articles,
+    hasMore: result.hasMore,
+  };
 }
 
 export async function getArticlesBySubcategory(
   categorySlug: string,
   subcategorySlug: string
 ): Promise<HomepageArticle[]> {
-  const categoryName =
-    getCategoryName(categorySlug);
-
-  const subcategoryName =
-    getSubcategoryName(
-      categorySlug,
-      subcategorySlug
-    );
-
-  if (
-    !categoryName ||
-    !subcategoryName
-  ) {
-    return [];
-  }
-
-  const articles =
-    await getHomepageSource();
-
-  return articles.filter(
-    (article) =>
-      article.categories?.name ===
-      categoryName &&
-      article.subcategories?.name ===
-      subcategoryName
+  const result = await getSubcategoryArticlePage(
+    categorySlug,
+    subcategorySlug,
+    1,
+    20
   );
+
+  return result.articles;
 }
 
 export async function getArticlesByTag(
@@ -199,6 +286,7 @@ export async function getArticlesByTag(
         title:
           media.title.rendered ??
           null,
+        caption: media.caption?.rendered ?? null,
       }
       : null;
 
@@ -286,7 +374,7 @@ export async function getRelatedArticles(
     ...relatedByTags,
     ...relatedBySubcategory,
     ...fallback,
-  ].slice(0, 3);
+  ].slice(0, 4);
 }
 
 export async function getArticlesByAuthor(
@@ -306,8 +394,11 @@ export async function getArticlesByAuthor(
 
   return articles.filter(
     (article) =>
-      article.authors?.name ===
-      authorName
+      article.authors?.name
+        ?.toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") === authorSlug
   );
 }
 

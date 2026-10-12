@@ -43,12 +43,17 @@ export type WpRestPost = {
             id: number;
             name: string;
             slug: string;
+            description?: string;
+            avatar_urls?: Record<string, string>;
         }[];
 
         "wp:featuredmedia"?: {
             id: number;
             source_url: string;
             alt_text: string;
+            caption?: {
+                rendered: string;
+            };
         }[];
 
         "wp:term"?: {
@@ -156,7 +161,7 @@ async function getWpLookup<T>(
             fetch(
                 `${WP_REST_URL}/${endpoint}?include=${chunk.join(",")}&per_page=100&_fields=${fields}`,
                 {
-                    cache: "no-store",
+                    next: { revalidate: 60 },
                 }
             )
         )
@@ -179,13 +184,183 @@ async function getWpLookup<T>(
     return results.flat();
 }
 
+export async function getWpPostsBySubcategorySlug(
+    subcategorySlug: string,
+    limit = 8
+): Promise<WpRestPost[]> {
+    const categoryResponse = await fetch(
+        `${WP_REST_URL}/categories?slug=${encodeURIComponent(subcategorySlug)}&_fields=id`,
+        {
+            next: { revalidate: 60 },
+        }
+    );
+
+    if (!categoryResponse.ok) {
+        throw new Error("Failed to fetch WordPress subcategory.");
+    }
+
+    const categories = (await categoryResponse.json()) as {
+        id: number;
+    }[];
+
+    const category = categories[0];
+
+    if (!category) {
+        return [];
+    }
+
+    const response = await fetch(
+        `${WP_REST_URL}/posts?categories=${category.id}&_embed&per_page=${limit}&orderby=date&order=desc`,
+        {
+            next: { revalidate: 60 },
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to fetch WordPress posts for subcategory ${subcategorySlug}.`
+        );
+    }
+
+    return (await response.json()) as WpRestPost[];
+}
+
+export async function getWpSubcategoryPostsPage(
+    subcategorySlug: string,
+    page = 1,
+    limit = 20
+): Promise<{ posts: WpRestPost[]; hasMore: boolean }> {
+    const categoryResponse = await fetch(
+        `${WP_REST_URL}/categories?slug=${encodeURIComponent(subcategorySlug)}&_fields=id`,
+        { next: { revalidate: 60 } }
+    );
+
+    if (!categoryResponse.ok) {
+        throw new Error("Failed to fetch WordPress subcategory.");
+    }
+
+    const categories = (await categoryResponse.json()) as { id: number }[];
+    const category = categories[0];
+
+    if (!category) {
+        return { posts: [], hasMore: false };
+    }
+
+    const response = await fetch(
+        `${WP_REST_URL}/posts?categories=${category.id}&_embed=wp:term&per_page=${limit}&page=${page}&orderby=date&order=desc`,
+        { next: { revalidate: 60 } }
+    );
+
+    if (!response.ok) {
+        if (response.status === 400) {
+            const errorBody = await response.clone().json().catch(() => null);
+            if (errorBody?.code === "rest_post_invalid_page_number") {
+                return { posts: [], hasMore: false };
+            }
+        }
+
+        throw new Error(
+            `Failed to fetch WordPress posts for subcategory ${subcategorySlug}.`
+        );
+    }
+
+    const posts = (await response.json()) as WpRestPost[];
+    const totalPages = Number(response.headers.get("X-WP-TotalPages") ?? "1");
+
+    return {
+        posts,
+        hasMore: page < totalPages,
+    };
+}
+
+export async function getWpPostsByCategorySlug(
+    categorySlug: string
+): Promise<WpRestPost[]> {
+    const categoryResponse = await fetch(
+        `${WP_REST_URL}/categories?slug=${encodeURIComponent(categorySlug)}&_fields=id`,
+        {
+            next: { revalidate: 60 },
+        }
+    );
+
+    if (!categoryResponse.ok) {
+        throw new Error("Failed to fetch WordPress category.");
+    }
+
+    const categories = (await categoryResponse.json()) as {
+        id: number;
+    }[];
+
+    const category = categories[0];
+
+    if (!category) {
+        return [];
+    }
+
+    const perPage = 100;
+    const endpoint =
+        `${WP_REST_URL}/posts?categories=${category.id}` +
+        `&_embed&per_page=${perPage}`;
+
+    const firstResponse = await fetch(
+        `${endpoint}&page=1`,
+        {
+            next: { revalidate: 60 },
+        }
+    );
+
+    if (!firstResponse.ok) {
+        throw new Error("Failed to fetch WordPress category posts.");
+    }
+
+    const totalPages = Number(
+        firstResponse.headers.get("X-WP-TotalPages") ?? "1"
+    );
+
+    const posts = (await firstResponse.json()) as WpRestPost[];
+
+    if (totalPages > 1) {
+        const pageRequests = [];
+
+        for (let page = 2; page <= totalPages; page++) {
+            pageRequests.push(
+                fetch(`${endpoint}&page=${page}`, {
+                    next: { revalidate: 60 },
+                })
+            );
+        }
+
+        const responses = await Promise.all(pageRequests);
+
+        for (let index = 0; index < responses.length; index++) {
+            const response = responses[index];
+
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to fetch WordPress category posts page ${index + 2}.`
+                );
+            }
+        }
+
+        const pagePosts = await Promise.all(
+            responses.map(
+                (response) => response.json() as Promise<WpRestPost[]>
+            )
+        );
+
+        posts.push(...pagePosts.flat());
+    }
+
+    return posts;
+}
+
 export async function getWpHomepagePostsLight() {
     const perPage = 100;
 
     const firstResponse = await fetch(
         `${WP_REST_URL}/posts?per_page=${perPage}&page=1&_fields=id,slug,date,title,excerpt,author,featured_media,categories,tags,is_top_story,is_must_read,content,yoast_head_json`,
         {
-            cache: "no-store",
+            next: { revalidate: 60 },
         }
     );
 
@@ -216,7 +391,7 @@ export async function getWpHomepagePostsLight() {
                 fetch(
                     `${WP_REST_URL}/posts?per_page=${perPage}&page=${page}&_fields=id,slug,date,title,excerpt,author,featured_media,categories,tags,is_top_story,is_must_read,content,yoast_head_json`,
                     {
-                        cache: "no-store",
+                        next: { revalidate: 60 },
                     }
                 )
             );
@@ -274,10 +449,12 @@ export async function getWpHomepagePostsLight() {
             id: number;
             name: string;
             slug: string;
+            description?: string;
+            avatar_urls?: Record<string, string>;
         }>(
             "users",
             authorIds,
-            "id,name,slug"
+            "id,name,slug,description,avatar_urls"
         ),
         getWpLookup<{
             id: number;
