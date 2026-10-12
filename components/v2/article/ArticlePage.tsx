@@ -41,6 +41,7 @@ export default function ArticlePage({
                     <ArticleSidebar
                         className="mt-14"
                         mustRead={mustRead}
+                        kesehatan={feed.kesehatan}
                         lifestyle={lifestyle}
                         explore={explore}
                     />
