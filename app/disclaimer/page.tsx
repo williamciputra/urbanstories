@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import StaticPageLayout from "@/components/v2/static/StaticPageLayout";
+import V3StaticPageLayout from "@/components/v3/shared/V3StaticPageLayout";
 
 export const metadata: Metadata = {
   title: "Disclaimer | Urbanstories",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function DisclaimerPage() {
   return (
-    <StaticPageLayout title="Disclaimer">
+    <V3StaticPageLayout title="Disclaimer">
       <p>
         Seluruh informasi yang dipublikasikan di Urbanstories disajikan dengan
         itikad baik untuk tujuan informasi dan edukasi.
@@ -41,6 +41,6 @@ export default function DisclaimerPage() {
         membaca, memahami, dan menyetujui seluruh ketentuan yang tercantum pada
         halaman Disclaimer ini.
       </p>
-    </StaticPageLayout>
+    </V3StaticPageLayout>
   );
 }

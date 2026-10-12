@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import StaticPageLayout from "@/components/v2/static/StaticPageLayout";
+import V3StaticPageLayout from "@/components/v3/shared/V3StaticPageLayout";
 
 export const metadata: Metadata = {
   title: "Kebijakan Privasi | Urbanstories",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <StaticPageLayout title="Kebijakan Privasi">
+    <V3StaticPageLayout title="Kebijakan Privasi">
       <p>
         Urbanstories menghargai privasi setiap pengunjung. Kami berkomitmen
         menjaga keamanan informasi yang Anda berikan saat menggunakan situs ini.
@@ -65,6 +65,6 @@ export default function PrivacyPolicyPage() {
           perubahan akan dipublikasikan melalui halaman ini.
         </p>
       </div>
-    </StaticPageLayout>
+    </V3StaticPageLayout>
   );
 }
