@@ -7,7 +7,7 @@ import { getArticlePageFeed } from "@/services/public/homepage-v2";
 import ReadingProgress from "@/components/ReadingProgress";
 import ArticleSchema from "@/components/seo/ArticleSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
-import ArticlePageV2 from "@/components/v2/article/ArticlePage";
+import ArticlePageV3 from "@/components/v3/article/ArticlePage";
 
 const SITE_URL = "https://urbanstories.id";
 
@@ -154,7 +154,7 @@ export default async function ArticlePage({
 
       <ReadingProgress />
 
-      <ArticlePageV2
+      <ArticlePageV3
         feed={feed}
       />
     </>

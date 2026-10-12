@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -56,7 +57,25 @@ body {
 =========================== */
 
 .article-content {
+  font-family: var(--font-article-inter), sans-serif;
   color: #3f3f46;
+}
+
+.article-content figure {
+  margin: 1.5rem 0;
+}
+
+.article-content .wp-element-caption,
+.article-content .wp-block-image figcaption,
+.article-content .wp-caption-text,
+.article-content figcaption,
+.article-content .wp-caption-text {
+  margin-top: 0.5rem;
+  color: #737373;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-style: italic;
+  text-align: left;
 }
 
 .article-content>*:first-child {
@@ -287,4 +306,12 @@ body {
 
 .article-content code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Article title: mobile only */
+@media (max-width: 1023px) {
+  h1.article-page-title {
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+  }
 }
