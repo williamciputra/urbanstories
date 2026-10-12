@@ -76,7 +76,7 @@ export function applyUrbanstoriesChrome(inputHtml: string): string {
               <div class="d-block lg:d-none">
                 <a class="uc-menu-trigger" href="#urbanstories-mobile-nav" aria-label="Buka menu" data-urbanstories-menu-toggle></a>
               </div>
-              <a href="/v3" class="text-none fw-bold text-primary" aria-label="Urbanstories" style="font-size: 36px; line-height: 1.1;">Urbanstories</a>
+              <a href="/" class="text-none fw-bold text-primary" aria-label="Urbanstories" style="font-size: 36px; line-height: 1.1;">Urbanstories</a>
             </div>
             <div class="uc-navbar-center">
               <ul class="uc-navbar-nav gap-3 xl:gap-4 fs-5 xl:fs-4 fw-bold d-none lg:d-flex" style="--uc-nav-height: 80px">
@@ -94,7 +94,7 @@ export function applyUrbanstoriesChrome(inputHtml: string): string {
             <div class="vstack gap-2">
               ${[
                 ...menuCategories.map((category) =>
-                  `<details><summary class="fw-bold py-1">${category.name}</summary><div class="hstack gap-2 flex-wrap py-2">${category.subs.map((sub) => `<a class="btn btn-sm btn-alt-primary" href="/${sub.slug}">${sub.name}</a>`).join("")}</div></details>`
+                  `<details><summary class="fw-bold py-1">${category.name}</summary><div class="hstack gap-2 flex-wrap py-2">${category.subs.map((sub) => `<a class="btn btn-sm btn-alt-primary" href="/category/${category.slug}/${sub.slug}">${sub.name}</a>`).join("")}</div></details>`
                 ),
                 '<a class="fw-bold py-1" href="/sports">Sports</a>'
               ].join("")}
@@ -175,7 +175,7 @@ export function applyUrbanstoriesChrome(inputHtml: string): string {
 
     const footerAbout = [
       { name: "About Us", href: "/about" },
-      { name: "Redaksi", href: "/v3" },
+      { name: "Redaksi", href: "/" },
       { name: "Kontak", href: "/contact" },
     ];
 

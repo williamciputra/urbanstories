@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import StaticPageLayout from "@/components/v2/static/StaticPageLayout";
+import V3StaticPageLayout from "@/components/v3/shared/V3StaticPageLayout";
 
 export const metadata: Metadata = {
   title: "Tentang Kami | Urbanstories",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <StaticPageLayout title="Tentang Urbanstories">
+    <V3StaticPageLayout title="Tentang Urbanstories">
       <p>
         Urbanstories adalah media digital yang menghadirkan cerita, wawasan, dan
         inspirasi seputar gaya hidup, kesehatan, bisnis, teknologi, hingga
@@ -44,6 +44,6 @@ export default function AboutPage() {
         </Link>
         .
       </p>
-    </StaticPageLayout>
+    </V3StaticPageLayout>
   );
 }

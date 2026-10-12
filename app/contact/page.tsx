@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import StaticPageLayout from "@/components/v2/static/StaticPageLayout";
+import V3StaticPageLayout from "@/components/v3/shared/V3StaticPageLayout";
 
 export const metadata: Metadata = {
   title: "Hubungi Kami | Urbanstories",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <StaticPageLayout title="Hubungi Kami">
+    <V3StaticPageLayout title="Hubungi Kami">
       <p>
         Kami terbuka untuk pertanyaan, masukan, maupun peluang kerja sama
         dengan Urbanstories. Jika kamu ingin menghubungi tim kami terkait
@@ -38,6 +38,6 @@ export default function ContactPage() {
         Kami akan berusaha merespons setiap pesan secepat mungkin pada hari
         kerja.
       </p>
-    </StaticPageLayout>
+    </V3StaticPageLayout>
   );
 }
