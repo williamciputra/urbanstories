@@ -38,6 +38,7 @@ async function getAllArticles(): Promise<
         title:
           media.title.rendered ??
           null,
+        caption: media.caption?.rendered ?? null,
       };
     }
 
@@ -74,6 +75,7 @@ async function getAllArticlesLight(): Promise<
           title:
             media.title.rendered ??
             null,
+          caption: media.caption?.rendered ?? null,
         }
       : null;
 
