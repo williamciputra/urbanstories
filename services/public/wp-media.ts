@@ -11,6 +11,10 @@ export type WpMedia = {
     title: {
         rendered: string;
     };
+
+    caption?: {
+        rendered: string;
+    };
 };
 
 export async function getMediaMap(
