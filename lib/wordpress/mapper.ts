@@ -104,8 +104,13 @@ export function mapWpPostToHomepageArticle(
 
         authors: author
             ? {
-                id: "",
+                id: String(author.id),
                 name: author.name,
+                slug: author.slug,
+                avatarUrl: author.avatar_urls?.["96"] ?? null,
+                bio: author.description
+                    ?.replace(/<[^>]*>/g, "")
+                    .trim() || null,
             }
             : null,
 
@@ -132,6 +137,7 @@ export function mapWpPostToHomepageArticle(
                     post.featured_image_alt ??
                     null,
                 title: null,
+                caption: null,
             }
             : null,
 
