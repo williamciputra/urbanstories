@@ -1,56 +1,34 @@
-import MustReadWidget from "@/components/v2/sidebar/MustReadWidget";
-import NewsletterWidget from "@/components/v2/sidebar/NewsletterWidget";
-
-import ArticleVideo from "./ArticleVideo";
-import ArticleSidebarSection from "./ArticleSidebarSection";
-
+import ArticleMustRead from "./ArticleMustRead";
+import ArticleKesehatan from "./ArticleKesehatan";
 import type { HomepageArticle } from "@/services/public/articles";
 
 type ArticleSidebarProps = {
     className?: string;
-
     mustRead: HomepageArticle[];
-    lifestyle: HomepageArticle[];
-    explore: HomepageArticle[];
+    kesehatan: HomepageArticle[];
+    lifestyle?: HomepageArticle[];
+    explore?: HomepageArticle[];
 };
 
 export default function ArticleSidebar({
     className,
-
     mustRead,
-    lifestyle,
-    explore,
+    kesehatan,
 }: ArticleSidebarProps) {
     return (
         <aside
             className={[
                 "hidden lg:block",
                 "space-y-8",
-                "lg:sticky lg:top-[116px]",
+                "lg:sticky lg:top-[40px]",
                 className,
             ]
                 .filter(Boolean)
                 .join(" ")}
         >
-            <MustReadWidget
-                articles={mustRead}
-            />
+            <ArticleMustRead articles={mustRead} />
 
-            <ArticleVideo />
-
-            <ArticleSidebarSection
-                title="Lifestyle"
-                href="/lifestyle"
-                articles={lifestyle}
-            />
-
-            <NewsletterWidget />
-
-            <ArticleSidebarSection
-                title="Explore"
-                href="/explore"
-                articles={explore}
-            />
+            <ArticleKesehatan articles={kesehatan} />
         </aside>
     );
 }
