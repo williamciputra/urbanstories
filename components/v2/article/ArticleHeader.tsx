@@ -4,6 +4,7 @@ import Link from "next/link";
 import ArticleShare from "./ArticleShare";
 
 import type { PublicArticle } from "@/services/public/articles";
+import { CATEGORY_SLUGS } from "@/lib/taxonomy/categories";
 
 type ArticleHeaderProps = {
     article: PublicArticle;
@@ -15,7 +16,7 @@ export default function ArticleHeader({
     return (
         <header>
 
-            <nav className="flex flex-wrap items-center gap-2 text-[12px] text-neutral-500 lg:text-[13px] lg:font-medium">
+            <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-[#D71920] lg:gap-2 lg:text-[13px] lg:font-medium">
 
                 <Link
                     href="/"
@@ -24,10 +25,10 @@ export default function ArticleHeader({
                     Home
                 </Link>
 
-                <span>/</span>
+                <span className="mx-1.5">›</span>
 
                 <Link
-                    href={`/${article.categories?.name.toLowerCase()}`}
+                    href={`/${Object.entries(CATEGORY_SLUGS).find(([, name]) => name === article.categories?.name)?.[0] ?? ""}`}
                     className="transition-colors hover:text-neutral-900"
                 >
                     {article.categories?.name}
@@ -35,10 +36,10 @@ export default function ArticleHeader({
 
                 {article.subcategories?.name && (
                     <>
-                        <span>/</span>
+                        <span className="mx-1.5">›</span>
 
                         <Link
-                            href={`/${article.subcategories.slug}`}
+                            href={`/category/${Object.entries(CATEGORY_SLUGS).find(([, name]) => name === article.categories?.name)?.[0] ?? ""}/${article.subcategories.slug}`}
                             className="transition-colors hover:text-neutral-900"
                         >
                             {article.subcategories.name}
@@ -48,13 +49,13 @@ export default function ArticleHeader({
 
             </nav>
 
-            <h1 className="mt-3 text-[28px] font-bold leading-[1.15] tracking-[-0.03em] text-neutral-900 lg:mt-4 lg:text-[46px] lg:leading-[1.08] lg:tracking-[-0.035em]">
+            <h1 className="article-page-title mt-5 max-w-[760px] !text-[24px] font-bold !leading-[1.2] tracking-[-0.03em] text-neutral-900 lg:mt-6 lg:!text-[42px] lg:!leading-[1.1] lg:tracking-[-0.035em]">
                 {article.title}
             </h1>
 
-            <div className="mt-4 flex items-center justify-between gap-3 lg:mt-5">
+            <div className="mt-3 flex max-w-[760px] flex-wrap items-center justify-between gap-x-4 gap-y-2 lg:mt-3.5">
 
-                <div className="min-w-0 flex flex-wrap items-center gap-1.5 text-[12px] text-neutral-500 lg:gap-2 lg:text-[14px]">
+                <div className="min-w-0 flex flex-wrap items-center gap-1.5 text-[12px] text-[#D71920] lg:gap-2 lg:text-[13px]">
 
                     <span>{article.authors?.name}</span>
 
@@ -90,7 +91,7 @@ export default function ArticleHeader({
 
                 </div>
 
-                <div className="lg:-translate-x-3">
+                <div className="shrink-0">
 
                     <ArticleShare
                         title={article.title}
@@ -105,9 +106,9 @@ export default function ArticleHeader({
 
             {article.media?.path && (
 
-                <figure className="mt-6 lg:mt-8">
+                <figure className="mt-3 lg:mt-4">
 
-                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-neutral-200 lg:aspect-[4/3]">
+                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-neutral-200">
 
                         <Image
                             src={article.media.path}
@@ -124,10 +125,13 @@ export default function ArticleHeader({
 
                     </div>
 
-                    {article.media.title && (
-                        <figcaption className="mt-2 text-[12px] italic text-neutral-500 lg:mt-3 lg:text-[13px]">
-                            {article.media.title}
-                        </figcaption>
+                    {article.media.caption && (
+                        <figcaption
+                            className="article-image-caption mt-2 text-[12px] italic text-neutral-500 lg:mt-3 lg:text-[13px]"
+                            dangerouslySetInnerHTML={{
+                                __html: article.media.caption,
+                            }}
+                        />
                     )}
 
                 </figure>

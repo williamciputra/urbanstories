@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 
 import "./globals.css";
 
@@ -17,6 +17,12 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const articleInter = Inter({
+  variable: "--font-article-inter",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const siteUrl = "https://urbanstories.id";
@@ -127,7 +133,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${articleInter.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {gaId && (

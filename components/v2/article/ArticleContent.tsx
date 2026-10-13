@@ -23,15 +23,15 @@ export default function ArticleContent({
             {article.tags.length > 0 && (
                 <div className="mt-8 border-t border-neutral-200 pt-5 lg:mt-10 lg:pt-6">
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
 
-                        <span className="mr-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-neutral-500 lg:mr-2 lg:text-sm">
+                        <span className="mr-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-neutral-900 lg:mr-2 lg:text-sm">
                             Tags:
                         </span>
 
                         {article.tags.map((tag) => (
                             <a
-                                key={tag.slug}
+                                key={tag.slug} style={{ color: "#D71920" }}
                                 href={`/tag/${tag.slug}`}
                                 className="
                                     rounded-full
@@ -40,10 +40,10 @@ export default function ArticleContent({
                                     px-2.5
                                     py-1
                                     text-[12px]
-                                    text-neutral-700
+                                    text-[#D71920]
                                     transition-all
-                                    hover:border-neutral-900
-                                    hover:bg-neutral-900
+                                    hover:border-[#D71920]
+                                    hover:bg-[#D71920]
                                     hover:text-white
                                     lg:px-3
                                     lg:text-sm
