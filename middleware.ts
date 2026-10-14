@@ -4,12 +4,6 @@ export function middleware(request: NextRequest) {
     const hostname = request.headers.get("host")?.split(":")[0];
 
     if (hostname === "urbanstories.id" || hostname === "www.urbanstories.id") {
-        if (request.nextUrl.pathname === "/") {
-            const url = request.nextUrl.clone();
-            url.pathname = "/v3";
-            return NextResponse.rewrite(url);
-        }
-
         return NextResponse.next();
     }
 
