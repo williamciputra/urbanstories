@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import Header from "@/components/v2/layout/Header";
-import Footer from "@/components/v2/layout/Footer";
-import ArticleCard from "@/components/ArticleCard";
+import { V3Header as Header, V3Footer as Footer } from "@/components/v3/shared/V3Chrome";
+import V3ArticleGrid from "@/components/v3/category/V3ArticleGrid";
 
 import {
   getHomepageSource,
@@ -93,14 +92,7 @@ export default async function SearchPage({
                 {results.length} artikel ditemukan
               </p>
 
-              <section className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-                {results.map((article) => (
-                  <ArticleCard
-                    key={article.id}
-                    article={article}
-                  />
-                ))}
-              </section>
+              <section className="mt-10"><V3ArticleGrid articles={results} /></section>
             </>
           )}
 

@@ -1,11 +1,7 @@
-import Header from "@/components/Header";
-import FeaturedNewsSection from "@/components/FeaturedNewsSection";
-import LifestyleSection from "@/components/LifestyleSection";
-import ExploreSection from "@/components/ExploreSection";
-import LatestArticles from "@/components/LatestArticles";
-import Newsletter from "@/components/Newsletter";
-import Footer from "@/components/Footer";
+import Link from "next/link";
 
+import { V3Header as Header, V3Footer as Footer } from "@/components/v3/shared/V3Chrome";
+import V3ArticleGrid from "@/components/v3/category/V3ArticleGrid";
 import { getHomepageFeed } from "@/services/public/homepage";
 
 type Props = {
@@ -14,59 +10,78 @@ type Props = {
   }>;
 };
 
-export default async function LatestPage({
-  params,
-}: Props) {
+export default async function LatestPage({ params }: Props) {
   const { page } = await params;
 
-  const currentPage = Math.max(
-    2,
-    Number(page) || 2
-  );
-
-  const homepage =
-    await getHomepageFeed(currentPage);
+  const currentPage = Math.max(2, Number(page) || 2);
+  const homepage = await getHomepageFeed(currentPage);
 
   return (
-    <main className="bg-[#FAF8F3]">
-      <div className="mx-auto max-w-7xl px-6">
+    <>
+      <Header />
 
-        <Header />
+      <main className="min-h-screen bg-white">
+        <div className="mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-10 lg:py-12">
+          <nav className="mb-6 flex items-center gap-2 text-sm text-neutral-500">
+            <Link href="/" className="transition-colors hover:text-neutral-900">
+              Home
+            </Link>
+            <span aria-hidden="true">›</span>
+            <span className="font-medium text-neutral-900">Artikel Terbaru</span>
+          </nav>
 
-        <FeaturedNewsSection
-          topStory={homepage.topStory}
-          latestHeadlines={
-            homepage.latestHeadlines
-          }
-        />
+          <header className="mb-7 flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="panel d-inline-block bg-primary h-8px w-8px translate-y-px"
+            />
+            <h1 className="h3 m-0 text-inherit">Artikel Terbaru</h1>
+          </header>
 
-        <LifestyleSection
-          articles={homepage.lifestyle}
-        />
+          {homepage.latestArticles.length > 0 ? (
+            <V3ArticleGrid articles={homepage.latestArticles} />
+          ) : (
+            <p className="py-12 text-center text-neutral-600">
+              Belum ada artikel pada halaman ini.
+            </p>
+          )}
 
-        <ExploreSection
-          articles={homepage.explore}
-        />
+          <nav
+            aria-label="Navigasi halaman artikel"
+            className="mt-10 flex items-center justify-center gap-6 text-sm"
+          >
+            {homepage.currentPage > 2 ? (
+              <Link
+                href={homepage.currentPage === 3 ? "/latest/2" : `/latest/${homepage.currentPage - 1}`}
+                className="text-neutral-700 transition hover:text-primary"
+              >
+                ← Sebelumnya
+              </Link>
+            ) : (
+              <Link href="/" className="text-neutral-700 transition hover:text-primary">
+                ← Beranda
+              </Link>
+            )}
 
-        <section className="mt-32">
-          <LatestArticles
-            articles={homepage.latestArticles}
-            currentPage={
-              homepage.currentPage
-            }
-            totalPages={
-              homepage.totalPages
-            }
-          />
-        </section>
+            <span className="font-semibold text-neutral-900">
+              Halaman {homepage.currentPage} dari {homepage.totalPages}
+            </span>
 
-        <section className="mt-32 pb-8">
-          <Newsletter />
-        </section>
-
-      </div>
+            {homepage.currentPage < homepage.totalPages ? (
+              <Link
+                href={`/latest/${homepage.currentPage + 1}`}
+                className="text-neutral-700 transition hover:text-primary"
+              >
+                Berikutnya →
+              </Link>
+            ) : (
+              <span className="text-neutral-400">Berikutnya →</span>
+            )}
+          </nav>
+        </div>
+      </main>
 
       <Footer />
-    </main>
+    </>
   );
 }

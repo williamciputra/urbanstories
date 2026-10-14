@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import Header from "@/components/v2/layout/Header";
-import Footer from "@/components/v2/layout/Footer";
+import { V3Header as Header, V3Footer as Footer } from "@/components/v3/shared/V3Chrome";
 import IndexFeed from "@/components/IndexFeed";
 
 import { getIndexArticles } from "@/services/public/articles";

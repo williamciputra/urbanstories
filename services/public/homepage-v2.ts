@@ -11,42 +11,52 @@ import {
     getHomepageSource,
 } from "./wordpress/articles";
 
-import {
-    getLatestFeedFromArticles,
-} from "./latest-v2";
-
 export type HomepageFeed = {
     topStory: HomepageArticle | null;
-
     mustRead: HomepageArticle[];
-
     latestHeadlines: HomepageArticle[];
-
     lifestyle: HomepageArticle[];
     explore: HomepageArticle[];
     entertainment: HomepageArticle[];
     parasayu: HomepageArticle[];
     kesehatan: HomepageArticle[];
-
     latestArticles: HomepageArticle[];
-
     currentPage: number;
     totalPages: number;
 };
 
 export type ArticlePageFeed = {
     article: PublicArticle;
-
     mustRead: HomepageArticle[];
-
     kesehatan: HomepageArticle[];
-
     lifestyle: HomepageArticle[];
-
     explore: HomepageArticle[];
-
     relatedArticles: HomepageArticle[];
 };
+
+const SECTION_SUBCATEGORY_SLUGS = new Set([
+    "fashion", "travel", "kuliner",
+    "refleksi", "intimacy", "leksikon", "parents",
+    "film", "musik", "hot-issue", "pop-art",
+    "parasayu", "kesehatan",
+]);
+
+// Only these subcategories belong in Hero/Latest Headlines.
+// Sports is a standalone category and does not require a subcategory.
+const HEADLINE_SUBCATEGORY_SLUGS = new Set([
+    "nasional", "internasional", "ekonomi", "otomotif",
+    "gadgets", "apps", "aplikasi", "ai",
+]);
+
+function byPublishedAt(
+    articles: HomepageArticle[],
+): HomepageArticle[] {
+    return [...articles].sort(
+        (a, b) =>
+            new Date(b.published_at).getTime() -
+            new Date(a.published_at).getTime()
+    );
+}
 
 function getBySubcategories(
     articles: HomepageArticle[],
@@ -64,16 +74,32 @@ function getBySubcategories(
         .slice(0, limit);
 
     selected.forEach((article) => usedIds.add(article.id));
-
     return selected;
 }
 
+function isHomepageHeadlineEligible(article: HomepageArticle): boolean {
+    if (SECTION_SUBCATEGORY_SLUGS.has(article.subcategories?.slug ?? "")) {
+        return false;
+    }
+
+    if (article.categories?.name === "Sports") {
+        return true;
+    }
+
+    return HEADLINE_SUBCATEGORY_SLUGS.has(
+        article.subcategories?.slug ?? ""
+    );
+}
+
 export function getHomepageFeedFromArticles(
-    articles: HomepageArticle[]
+    sourceArticles: HomepageArticle[]
 ): HomepageFeed {
+    // WordPress normally returns newest first; sort explicitly so every section
+    // follows published_at and does not depend on API response ordering.
+    const articles = byPublishedAt(sourceArticles);
     const usedIds = new Set<string>();
 
-    // Alokasikan artikel ke section terlebih dahulu agar tidak tersedot ke Hero.
+    // Allocate dedicated sections first. Overflow remains available to Latest News.
     const lifestyle = getBySubcategories(
         articles, usedIds, ["fashion", "kuliner", "travel"], 6
     );
@@ -84,39 +110,46 @@ export function getHomepageFeedFromArticles(
         articles, usedIds, ["film", "musik", "hot-issue", "pop-art"], 6
     );
     const parasayu = getBySubcategories(
-        articles, usedIds, ["parasayu"], 5
+        articles, usedIds, ["parasayu"], 4
     );
     const kesehatan = getBySubcategories(
-        articles, usedIds, ["kesehatan"], 5
+        articles, usedIds, ["kesehatan"], 4
     );
 
-    // Hero hanya mengambil Top Story yang belum dialokasikan ke section.
+    // Only eligible non-section articles can be the active Top Story.
+    // If several articles retain is_top_story=true, the newest published one wins.
     const topStory =
-        articles.find(
-            (article) => article.is_top_story && !usedIds.has(article.id)
-        ) ?? null;
+        articles
+            .filter((article) => article.is_top_story)
+            .sort(
+                (a, b) =>
+                    new Date(b.published_at).getTime() -
+                    new Date(a.published_at).getTime()
+            )[0] ?? null;
 
     if (topStory) {
         usedIds.add(topStory.id);
     }
 
-    // Latest Headlines hanya untuk News, Technology, dan Sports.
-    const headlineCategories = ["News", "Technology", "Sports"];
+    // Four newest eligible articles after the active Top Story.
+    // Older articles still marked is_top_story return to chronological flow.
     const latestHeadlines = articles
         .filter(
             (article) =>
                 !usedIds.has(article.id) &&
-                headlineCategories.includes(article.categories?.name ?? "")
+                isHomepageHeadlineEligible(article)
         )
         .slice(0, 4);
 
     latestHeadlines.forEach((article) => usedIds.add(article.id));
 
-    // Must Read maksimal empat artikel; boleh muncul juga di bagian lain.
+    // Must Read is intentionally independent: it may duplicate articles in any section.
     const mustRead = articles
         .filter((article) => article.is_must_read)
         .slice(0, 4);
 
+    // Everything not selected for a non-Must-Read homepage slot flows into Latest News,
+    // including overflow from dedicated sections and older Top Story articles.
     const remainingArticles = articles.filter(
         (article) => !usedIds.has(article.id)
     );
@@ -128,50 +161,57 @@ export function getHomepageFeedFromArticles(
     const latestArticles = remainingArticles.slice(0, latestPerPage);
 
     return {
-        topStory, mustRead, latestHeadlines, lifestyle, explore,
-        entertainment, parasayu, kesehatan, latestArticles,
-        currentPage: 1, totalPages
+        topStory,
+        mustRead,
+        latestHeadlines,
+        lifestyle,
+        explore,
+        entertainment,
+        parasayu,
+        kesehatan,
+        latestArticles,
+        currentPage: 1,
+        totalPages,
     };
 }
 
 export async function getHomepageFeed(): Promise<HomepageFeed> {
-    const articles =
-        await getHomepageSource();
-
-    return getHomepageFeedFromArticles(
-        articles
-    );
+    const articles = await getHomepageSource();
+    return getHomepageFeedFromArticles(articles);
 }
 
 export async function getArticlePageFeed(
     article: PublicArticle
 ): Promise<ArticlePageFeed> {
-    const articles =
-        await getHomepageSource();
+    const articles = byPublishedAt(await getHomepageSource());
 
-    const homepage =
-        getHomepageFeedFromArticles(articles);
+    // Preserve the article-page section selections; homepage-only limits must not
+    // change the article page's existing related-section data.
+    const articlePageUsedIds = new Set<string>();
+    const lifestyle = getBySubcategories(
+        articles, articlePageUsedIds, ["fashion", "kuliner", "travel"], 6
+    );
+    const explore = getBySubcategories(
+        articles, articlePageUsedIds, ["refleksi", "intimacy", "leksikon", "parents"], 6
+    );
+    const kesehatan = getBySubcategories(
+        articles, articlePageUsedIds, ["kesehatan"], 5
+    );
 
-    const relatedArticles =
-        await getRelatedArticles(
-            article.slug,
-            article.subcategories?.slug ??
-            null,
-            article.tags,
-            articles
-        );
+    const homepage = getHomepageFeedFromArticles(articles);
+    const relatedArticles = await getRelatedArticles(
+        article.slug,
+        article.subcategories?.slug ?? null,
+        article.tags,
+        articles
+    );
 
     return {
         article,
-
         mustRead: homepage.mustRead,
-
-        kesehatan: homepage.kesehatan,
-
-        lifestyle: homepage.lifestyle,
-
-        explore: homepage.explore,
-
+        kesehatan,
+        lifestyle,
+        explore,
         relatedArticles,
     };
 }

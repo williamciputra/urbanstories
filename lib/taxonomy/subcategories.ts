@@ -3,6 +3,7 @@ export const SUBCATEGORY_SLUGS = {
     nasional: "Nasional",
     internasional: "Internasional",
     ekonomi: "Ekonomi",
+    otomotif: "Otomotif",
   },
 
   lifestyle: {

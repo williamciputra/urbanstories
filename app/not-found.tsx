@@ -1,14 +1,14 @@
 import Link from "next/link";
 
-import Header from "@/components/v2/layout/Header";
-import Footer from "@/components/v2/layout/Footer";
+import { V3Header as Header } from "@/components/v3/shared/V3Chrome";
+import { V3Footer as Footer } from "@/components/v3/shared/V3Chrome";
 
 export default function NotFound() {
   return (
     <>
       <Header />
 
-      <main className="flex flex-1 items-center bg-[#FAF8F3]">
+      <main className="flex flex-1 items-center bg-white">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
           <p className="text-sm font-medium uppercase tracking-[0.35em] text-neutral-500">
             Error 404

@@ -88,9 +88,13 @@ export async function getTopStory() {
     await getAllArticles();
 
   return (
-    articles.find(
-      (a) => a.is_top_story
-    ) ?? null
+    articles
+      .filter((a) => a.is_top_story)
+      .sort(
+        (a, b) =>
+          new Date(b.published_at).getTime() -
+          new Date(a.published_at).getTime()
+      )[0] ?? null
   );
 }
 
